@@ -1,0 +1,213 @@
+openapi: 3.1.0
+info:
+  title: Windfall Windfall API API
+  description: 'The Windfall API delivers enriched household and career data on a single-record basis in real time. Submit a person record with basic PII and receive enriched data about their household and career — all returned as JSON in a single request.
+
+
+    Unlike batch enrichment jobs, the API returns results immediately, making it ideal for workflows that need data at the point of action.
+
+
+    ## Common Use Cases
+
+
+    - **Sales** — Real-time enrichment for lead routing and grading to inform immediate action.
+
+    - **Marketing** — Enrich new leads as they''re created and enroll them in relevant nurture flows.
+
+    - **Analytics** — Consume data in real time to power internal scoring and modeling efforts.
+
+
+    ## Authentication
+
+
+    All API requests require a valid token in the `X-WF-Auth-Token` header. Tokens are issued by Windfall and tied to your organization''s account. All requests must be made over HTTPS.
+
+
+    > **Keep your token secure.** Never expose your API token in client-side code or public repositories.
+
+
+    ## API Tokens
+
+
+    Each token is issued with a set number of usage tokens that correspond to the number of records you can query. The token allocation and refresh frequency are determined by your purchase order.
+
+
+    ## Rate Limits
+
+
+    The API enforces a maximum of **5 requests per second**. Exceeding this limit returns a `429` status with a `rate_limit` error. Back off and retry after a brief delay.'
+  version: 1.0.0
+  x-logo:
+    url: /logo.svg
+    altText: Windfall
+servers:
+- url: https://api.windfalldata.com/v1
+security:
+- ApiToken: []
+tags:
+- name: Windfall API
+paths:
+  /:
+    post:
+      operationId: enrichRecord
+      summary: Enrich a person record
+      description: Submit a person record with PII fields and receive Windfall's enriched household and career data in real time.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnrichmentRequest'
+            example:
+              id: 16a903p
+              first_name: Jane
+              last_name: Doe
+              addresses:
+              - address: 123 Main St, Apt A
+                city: San Francisco
+                state: CA
+                zipcode: '94133'
+              emails:
+              - jdoe@windfall.com
+              - jane@doe.com
+              phones:
+              - 415-555-1212
+              company_name: Acme Inc
+      responses:
+        '200':
+          description: Enrichment results returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnrichmentResponse'
+              example:
+                id: 16a903p
+                household:
+                  confidence: 1.0
+                  windfall_id: bde3d183ad6215f2932217ee5d6d368a
+                  net_worth: 4200000
+                career:
+                  confidence: 0.7
+                  linkedin_url: linkedin.com/in/jane-doe-san-francisco
+                household_matched: true
+                career_matched: true
+        '400':
+          description: Malformed request body. Ensure your JSON is valid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Invalid or missing API token. Check your `X-WF-Auth-Token` header.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Rate limit exceeded. Maximum 5 requests per second. Back off and retry after a brief delay.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Windfall API
+components:
+  schemas:
+    EnrichmentResponse:
+      type: object
+      description: Enrichment results for the submitted person record.
+      properties:
+        id:
+          type: string
+          nullable: true
+          description: The ID you submitted, echoed back.
+        household:
+          type: object
+          nullable: true
+          description: Enriched household data including Windfall ID, net worth, and confidence score. Only present when a household match is found. Fields vary by account configuration.
+        career:
+          type: object
+          nullable: true
+          description: Career data including LinkedIn URL and confidence score. Only present when a career match is found. Fields vary by account configuration.
+        household_matched:
+          type: boolean
+          description: Whether household attributes were returned.
+        career_matched:
+          type: boolean
+          description: Whether career attributes were returned.
+      required:
+      - household_matched
+      - career_matched
+    EnrichmentRequest:
+      type: object
+      description: A person record to enrich. Provide as many fields as possible for the best match results.
+      properties:
+        id:
+          type: string
+          nullable: true
+          description: Unique identifier from your system of record. Echoed back in the response for correlation.
+        first_name:
+          type: string
+          nullable: true
+          description: First name of the individual.
+        last_name:
+          type: string
+          nullable: true
+          description: Last name of the individual. If you only have a full name, enter it here and leave `first_name` empty.
+        addresses:
+          type: array
+          default: []
+          description: A list of addresses associated with the individual.
+          items:
+            $ref: '#/components/schemas/Address'
+        emails:
+          type: array
+          default: []
+          description: A list of email addresses associated with the individual.
+          items:
+            type: string
+        phones:
+          type: array
+          default: []
+          description: A list of phone numbers. When a country code is not provided, +1 (United States) is assumed. Formatting is flexible.
+          items:
+            type: string
+        company_name:
+          type: string
+          nullable: true
+          description: A company name associated with the individual. Used to improve career matching accuracy when multiple people share the same name.
+    Address:
+      type: object
+      description: A property address used during matching.
+      properties:
+        address:
+          type: string
+          nullable: true
+          description: Street address. Multiple address lines should be concatenated with a space, e.g. `123 Main St Unit 42`. Can also be a full address if components aren't available separately.
+        city:
+          type: string
+          nullable: true
+          description: City or locality. Should be a locality recognized by the USPS.
+        state:
+          type: string
+          nullable: true
+          description: State abbreviation or full name. When not provided, it may be inferred from the zip code.
+        zipcode:
+          type: string
+          nullable: true
+          description: US or Canadian zip code. Must include at least 5 digits and may optionally include the +4 digits. For best results, always provide a zip code.
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error type identifier.
+        message:
+          type: string
+          description: Human-readable error message.
+  securitySchemes:
+    ApiToken:
+      type: apiKey
+      name: X-WF-Auth-Token
+      in: header
+      description: Your API token, provided by Windfall. All requests must include this header.

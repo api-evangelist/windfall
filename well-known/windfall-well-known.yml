@@ -1,0 +1,21 @@
+generated: '2026-07-21'
+method: searched
+note: >-
+  No /.well-known discovery documents were served. The API host
+  (api.windfalldata.com) returns 401 for every /.well-known path (auth-walled),
+  and the marketing host (www.windfall.com) returns 404. No documents saved.
+hosts:
+- host: https://api.windfalldata.com
+  documents:
+  - {path: /.well-known/security.txt, status: 401}
+  - {path: /.well-known/openid-configuration, status: 401}
+  - {path: /.well-known/oauth-authorization-server, status: 401}
+  - {path: /.well-known/api-catalog, status: 401}
+  - {path: /.well-known/ai-plugin.json, status: 401}
+- host: https://www.windfall.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}

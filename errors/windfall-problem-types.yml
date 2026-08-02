@@ -1,0 +1,35 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/windfall-openapi-original.json
+docs: https://api-docs.windfall.com/examples/
+format: custom-json
+envelope:
+  description: >-
+    Errors are returned as a JSON object with an `error` type identifier and a
+    human-readable `message`. This is NOT RFC 9457 application/problem+json.
+  fields:
+    error: Error type identifier (e.g. rate_limit).
+    message: Human-readable error message.
+problems:
+- status: 400
+  error: bad_request
+  title: Malformed request body
+  remediation: Ensure your JSON is valid and well-formed.
+  source_operation: openapi/windfall-openapi-original.json#enrichRecord
+- status: 401
+  error: unauthorized
+  title: Invalid or missing API token
+  remediation: Check your X-WF-Auth-Token header; the token must be issued by Windfall and valid.
+  source_operation: openapi/windfall-openapi-original.json#enrichRecord
+- status: 403
+  error: forbidden
+  title: Token/environment mismatch
+  remediation: >-
+    A production token was used against the sandbox endpoint or a sandbox_ token
+    against production. Use the token matching the environment.
+  source_operation: docs:sandbox
+- status: 429
+  error: rate_limit
+  title: Rate limit exceeded
+  remediation: Maximum 5 requests per second. Back off and retry after a brief delay.
+  source_operation: openapi/windfall-openapi-original.json#enrichRecord

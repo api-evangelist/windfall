@@ -1,0 +1,54 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/windfall-openapi-original.json
+docs: https://api-docs.windfall.com/
+entities:
+- name: EnrichmentRequest
+  role: request
+  description: A person record to enrich; provide as many identifiers as possible for best match.
+  fields:
+  - {name: id, type: string, note: Your system-of-record id; echoed back for correlation.}
+  - {name: first_name, type: string}
+  - {name: last_name, type: string}
+  - {name: addresses, type: array<Address>}
+  - {name: emails, type: array<string>}
+  - {name: phones, type: array<string>, note: Defaults to +1 (US) when no country code.}
+  - {name: company_name, type: string, note: Improves career matching when names collide.}
+- name: Address
+  role: value-object
+  description: A property address used during matching.
+  fields:
+  - {name: address, type: string}
+  - {name: city, type: string}
+  - {name: state, type: string}
+  - {name: zipcode, type: string, note: US/Canadian zip; >=5 digits, optional +4.}
+- name: EnrichmentResponse
+  role: response
+  description: Enrichment results for the submitted person record.
+  fields:
+  - {name: id, type: string, note: Echoed from the request.}
+  - {name: household, type: object, note: Present only when household_matched; fields vary by account config.}
+  - {name: career, type: object, note: Present only when career_matched; fields vary by account config.}
+  - {name: household_matched, type: boolean, required: true}
+  - {name: career_matched, type: boolean, required: true}
+- name: Household
+  role: response-subobject
+  description: Enriched household/wealth attributes (subset shown; fields vary by account configuration).
+  fields:
+  - {name: windfall_id, type: string, note: Stable Windfall household identifier.}
+  - {name: net_worth, type: number}
+  - {name: confidence, type: number, note: 0.0-1.0 match confidence.}
+- name: Career
+  role: response-subobject
+  description: Enriched career/employment attributes (subset shown; fields vary by account configuration).
+  fields:
+  - {name: linkedin_url, type: string}
+  - {name: job_title, type: string}
+  - {name: confidence, type: number, note: 0.0-1.0 match confidence.}
+relationships:
+- {from: EnrichmentRequest, to: Address, kind: has_many, via: addresses}
+- {from: EnrichmentResponse, to: Household, kind: has_one, via: household}
+- {from: EnrichmentResponse, to: Career, kind: has_one, via: career}
+- {from: EnrichmentResponse, to: EnrichmentRequest, kind: belongs_to, via: id}
+id_prefixes:
+  windfall_id: 32-char hex household identifier (e.g. bde3d183ad6215f2932217ee5d6d368a)

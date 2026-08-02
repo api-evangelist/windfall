@@ -1,0 +1,42 @@
+# Windfall
+
+> Windfall is an AI-powered people intelligence platform that lets data-driven teams personalize go-to-market workflows with wealth and career data. The Windfall API delivers enriched household and career data on a single-record basis in real time: submit a person record with basic PII and receive enriched data about their household (net worth, Windfall ID, confidence) and career (LinkedIn URL, confidence) as JSON in a single request. US coverage only; data refreshed weekly; 5 requests/second.
+
+## APIs
+
+- [Windfall API — Enrich a Record](https://api-docs.windfall.com/): Real-time single-record household + career enrichment. Base URL `https://api.windfalldata.com/v1`. Auth via `X-WF-Auth-Token` header (org-issued token).
+
+## Specs
+
+- [OpenAPI 3.1](https://api-docs.windfall.com/static/openapi.json): The Windfall API OpenAPI description (operation `enrichRecord`).
+
+## Docs
+
+- [API Overview](https://api-docs.windfall.com/): Getting started, capabilities, and coverage.
+- [Authentication](https://api-docs.windfall.com/authentication/): `X-WF-Auth-Token` header, token issuance, HTTPS requirement.
+- [Quickstart](https://api-docs.windfall.com/quickstart/): Make your first request in cURL, Python, or Node.js.
+- [Sandbox](https://api-docs.windfall.com/sandbox/): Non-billed environment with deterministic responses from 15 fictitious personas; `sandbox_`-prefixed tokens against `https://api.windfalldata.com/sandbox/v1`.
+- [Household Fields](https://api-docs.windfall.com/): Reference for household response fields.
+- [Career Fields](https://api-docs.windfall.com/): Reference for career response fields.
+- [Examples & FAQs](https://api-docs.windfall.com/examples/): Common integration patterns, partial-match handling, rate-limit-aware batching.
+
+## Company
+
+- [Windfall](https://www.windfall.com/): Company home.
+- [API product page](https://www.windfall.com/api): Real-time wealth and career intelligence via API.
+- [Blog](https://www.windfall.com/blog)
+- [Security](https://www.windfall.com/security): SOC 2 Type 2.
+- [Terms of Service](https://www.windfall.com/terms-of-service)
+- [Privacy Policy](https://www.windfall.com/privacy)
+
+## Enrichment artifacts (API Evangelist)
+
+- [Authentication profile](authentication/windfall-authentication.yml)
+- [Conventions](conventions/windfall-conventions.yml)
+- [Error catalog](errors/windfall-problem-types.yml)
+- [Lifecycle](lifecycle/windfall-lifecycle.yml)
+- [Sandbox](sandbox/windfall-sandbox.yml)
+- [Data model](data-model/windfall-data-model.yml)
+- [Conformance](conformance/windfall-conformance.yml)
+- [Trust center](security/windfall-trust-center.yml)
+- [Agent skill: enrich a person record](skills/windfall-enrich-person-record.md)

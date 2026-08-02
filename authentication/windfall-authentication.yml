@@ -1,0 +1,29 @@
+generated: '2026-07-21'
+method: searched
+source: openapi/windfall-openapi-original.json
+docs: https://api-docs.windfall.com/authentication/
+summary:
+  types:
+  - apiKey
+  api_key_in:
+  - header
+schemes:
+- name: ApiToken
+  type: apiKey
+  in: header
+  parameter: X-WF-Auth-Token
+  description: >-
+    Your API token, provided by Windfall and tied to your organization's account.
+    All requests must include this header and must be made over HTTPS. Tokens are
+    issued by Windfall (not self-service); each token carries a set number of usage
+    tokens corresponding to queryable records, with allocation and refresh frequency
+    determined by your purchase order. Sandbox tokens are prefixed with `sandbox_`
+    and are separate from production tokens — a production token on the sandbox
+    endpoint (or vice versa) returns 403.
+  sources:
+  - openapi/windfall-openapi-original.json
+notes:
+  self_service: false
+  token_issuance: Issued by Windfall, tied to the organization account.
+  sandbox_prefix: sandbox_
+  https_required: true

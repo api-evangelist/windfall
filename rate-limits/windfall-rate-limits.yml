@@ -1,0 +1,16 @@
+generated: '2026-07-21'
+method: searched
+source: https://api-docs.windfall.com/
+docs: https://api-docs.windfall.com/
+rate_limits:
+- scope: global
+  limit_count: 5
+  window: second
+  unit: requests
+  applies_to: openapi/windfall-openapi-original.json#enrichRecord
+  exceeded_status: 429
+  exceeded_error: rate_limit
+  guidance: >-
+    Exceeding the limit returns a 429 with a rate_limit error. Back off and retry
+    after a brief delay; docs recommend ~0.2s between requests in batch loops.
+notes: Same 5 requests/second limit applies to both the production and sandbox endpoints.

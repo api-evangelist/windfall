@@ -1,0 +1,24 @@
+generated: '2026-07-21'
+method: searched
+source: openapi/windfall-openapi-original.json
+docs: https://api-docs.windfall.com/
+versioning:
+  scheme: uri-path
+  current: v1
+  base_url: https://api.windfalldata.com/v1
+deprecation:
+  policy_url: null
+  sunset_header: null
+  note: No published deprecation policy or RFC 8594 Sunset/Deprecation header support found.
+sla:
+  url: null
+  rate_limit: 5 requests/second
+  response_time: < 1 second (per docs)
+  data_freshness: Updated weekly
+  coverage: United States only
+status_page: null
+deprecated_operations: []
+notes: >-
+  No public status page, changelog, or roadmap was found (status.windfall.com,
+  status.windfalldata.com, /changelog all 404 as of this pass). Versioning is a
+  single major version (v1) carried in the URI path.

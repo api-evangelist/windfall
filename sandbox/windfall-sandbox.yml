@@ -1,0 +1,65 @@
+generated: '2026-07-21'
+method: searched
+source: https://api-docs.windfall.com/sandbox/
+description: >-
+  Windfall publishes a non-billed sandbox that mirrors the production endpoint and
+  returns deterministic responses from a fixed set of fictitious personas. It uses
+  the identical request body, response shape, and matching pipeline as production —
+  only the data source differs — so integrations can be built and tested without
+  consuming credits or touching real customer data.
+endpoint:
+  base_url: https://api.windfalldata.com/sandbox/v1
+  method: POST
+  content_type: application/json
+  auth_header: X-WF-Auth-Token
+  rate_limit: 5 requests/second
+  billing: non-billed (free; does not draw from token quota)
+tokens:
+  format: sandbox_YOUR_KEY
+  prefix: sandbox_
+  issuance: Issued by Windfall; contact your account representative to provision one.
+  isolation: >-
+    Production tokens do not work on the sandbox endpoint and sandbox tokens do not
+    work on production; either mismatch returns 403.
+match_scenarios:
+- id: household_and_career
+  description: Full enrichment — wealth, household, and career/employment data.
+  personas: [Amanda Taylor, Daniel Garcia, Michelle Robinson, James Thompson, Catherine White]
+- id: household_only
+  description: Wealth and household data; career field absent.
+  personas: [Jane Doe, Robert Smith, Sarah Johnson, Michael Williams, Elizabeth Brown]
+- id: career_only
+  description: Career/employment data only; household field absent. Requires Career Intelligence (CI) on the account.
+  personas: [David Wilson, Jennifer Davis, Thomas Anderson, Patricia Martinez, Christopher Lee]
+- id: no_match
+  description: Any request that does not match a persona; both flags false, enrichment objects absent.
+  personas: []
+matchers:
+  note: >-
+    The sandbox uses the same matchers as production. A request matches a persona
+    when one matcher combination resolves. Sending only first/last name will not match.
+  combinations:
+  - name: Email
+    required_fields: [emails]
+  - name: Full address
+    required_fields:
+    - 'addresses[].address (number + street)'
+    - 'addresses[].zipcode'
+  - name: Phone + name
+    required_fields: [phones, first_name, last_name]
+persona_notes:
+  count: 15
+  categories: 3
+  per_category: 5
+  ci_dependency: >-
+    If the account does not have Career Intelligence (CI) enabled, the "Both" personas
+    return household_matched true / career_matched false, and the "Career-only" personas
+    return both flags false (no match).
+example_request:
+  first_name: Amanda
+  last_name: Taylor
+  addresses:
+  - address: 100 Demo St
+    zipcode: '30301'
+  emails: [amanda.taylor@sandbox.windfall.com]
+  phones: ['5553000001']

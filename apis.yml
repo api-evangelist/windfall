@@ -1,7 +1,28 @@
 aid: windfall
 name: Windfall
-description: 'Windfall is a company surfaced as a portfolio company of homebrew and added to the API Evangelist
-  network as a stub for enrichment. Sector: fintech. This profile is a lead awaiting the enrichment pipeline.'
+description: >-
+  Windfall is an AI-powered people intelligence platform that helps go-to-market
+  teams personalize workflows with wealth and career data, serving 1,500+
+  organizations across finance, retail, education, healthcare, and nonprofits.
+  The Windfall API delivers enriched household (net worth, Windfall ID,
+  confidence) and career (LinkedIn URL, job title, confidence) data for a single
+  person record in real time — submit basic PII and receive JSON in one HTTPS
+  request. US coverage only; data refreshed weekly; rate limited to 5
+  requests/second; and a non-billed sandbox with deterministic fictitious
+  personas mirrors production for integration testing.
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://api-docs.windfall.com/logo.svg
 url: https://raw.githubusercontent.com/api-evangelist/windfall/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -11,11 +32,38 @@ x-tier: stub
 x-tier-reason: portfolio-lead
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-21'
 tags:
 - Company
 - Fintech
-apis: []
+- Data Enrichment
+- Wealth Data
+- People Intelligence
+- Career Data
+- Identity Resolution
+- Sales Intelligence
+- Marketing
+apis:
+- aid: windfall:windfall-windfall-api-api
+  name: Windfall Windfall API API
+  description: The Windfall API API from Windfall — 1 operation(s) for windfall api.
+  humanURL: https://api-docs.windfall.com/
+  baseURL: https://api.windfalldata.com/v1
+  tags:
+  - Windfall API
+  properties:
+  - type: OpenAPI
+    url: openapi/windfall-windfall-api-api-openapi.yml
+  - type: ErrorCatalog
+    url: errors/windfall-problem-types.yml
+  - type: DataModel
+    url: data-model/windfall-data-model.yml
+  - type: Documentation
+    url: https://api-docs.windfall.com/
+  - type: APIReference
+    url: https://api-docs.windfall.com/
+  - type: GettingStarted
+    url: https://api-docs.windfall.com/quickstart/
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -23,4 +71,55 @@ maintainers:
   email: info@apis.io
 common:
 - type: Website
-  url: http://windfalldata.com
+  url: https://www.windfall.com
+- type: DeveloperPortal
+  url: https://api-docs.windfall.com/
+- type: Documentation
+  url: https://api-docs.windfall.com/
+- type: APIReference
+  url: https://api-docs.windfall.com/
+- type: GettingStarted
+  url: https://api-docs.windfall.com/quickstart/
+- type: Blog
+  url: https://www.windfall.com/blog
+- type: Support
+  url: https://www.windfall.com/contact
+- type: Login
+  url: https://login.windfalldata.com/login
+- type: TermsOfService
+  url: https://www.windfall.com/terms-of-service
+- type: PrivacyPolicy
+  url: https://www.windfall.com/privacy
+- type: GitHubOrganization
+  url: https://github.com/windfalldata
+- type: Compliance
+  url: https://www.windfall.com/security
+- type: TrustCenter
+  url: security/windfall-trust-center.yml
+- type: Conformance
+  url: conformance/windfall-conformance.yml
+- type: Authentication
+  url: authentication/windfall-authentication.yml
+- type: Conventions
+  url: conventions/windfall-conventions.yml
+- type: Lifecycle
+  url: lifecycle/windfall-lifecycle.yml
+- type: RateLimits
+  url: rate-limits/windfall-rate-limits.yml
+- type: Sandbox
+  url: sandbox/windfall-sandbox.yml
+- type: MCPServer
+  url: mcp/windfall-mcp.yml
+- type: AgentSkill
+  url: skills/windfall-enrich-person-record.md
+- type: LLMsTxt
+  url: llms/windfall-llms.txt
+- type: AgenticAccess
+  url: agentic-access/windfall-agentic-access.yml
+- type: DomainSecurity
+  url: security/windfall-domain-security.yml
+x-enrichment:
+  date: '2026-07-21'
+  status: enriched
+  artifacts_added: 18
+  pass: local-v1

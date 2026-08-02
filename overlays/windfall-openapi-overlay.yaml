@@ -1,0 +1,28 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Windfall API
+  version: 1.0.0
+extends: openapi/windfall-openapi-original.json
+actions:
+- target: $.info
+  update:
+    x-apievangelist-enriched: '2026-07-21'
+    x-apievangelist-provider: windfall
+    x-apievangelist-category:
+    - data-enrichment
+    - people-intelligence
+    - wealth-data
+- target: $.info
+  update:
+    x-apievangelist-notes: >-
+      Single-operation real-time enrichment API (US only, weekly refresh).
+      Auth is an org-issued apiKey in the X-WF-Auth-Token header. A parallel
+      sandbox endpoint (https://api.windfalldata.com/sandbox/v1) accepts
+      sandbox_-prefixed tokens and returns deterministic persona responses.
+- target: $.servers
+  update:
+    x-apievangelist-sandbox-server: https://api.windfalldata.com/sandbox/v1
+- target: $.paths./.post
+  update:
+    x-apievangelist-idempotent: false
+    x-apievangelist-rate-limit: 5 requests/second

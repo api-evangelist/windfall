@@ -1,0 +1,32 @@
+generated: '2026-07-21'
+method: searched
+source: openapi/windfall-openapi-original.json
+docs: https://www.windfall.com/security
+standards:
+- id: oauth2
+  conforms: false
+- id: oidc
+  conforms: false
+- id: apikey-auth
+  conforms: true
+  evidence: openapi securityScheme type apiKey (X-WF-Auth-Token header)
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: errors returned as a custom {error, message} JSON envelope, not application/problem+json
+- id: json-over-https
+  conforms: true
+  evidence: HTTPS-only; requests and responses are application/json
+- id: pagination
+  conforms: false
+  evidence: single-record real-time enrichment; no collection endpoints
+- id: idempotency
+  conforms: false
+  evidence: no idempotency-key header documented
+- id: soc2-type2
+  conforms: true
+  evidence: SOC 2 Type 2 attestation announced on https://www.windfall.com/security
+compliance:
+  published: true
+  programs:
+  - SOC 2 Type 2
+  source: https://www.windfall.com/security

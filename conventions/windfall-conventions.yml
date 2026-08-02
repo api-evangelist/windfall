@@ -1,0 +1,48 @@
+generated: '2026-07-21'
+method: searched
+source: openapi/windfall-openapi-original.json
+docs: https://api-docs.windfall.com/
+authentication:
+  style: api-key
+  header: X-WF-Auth-Token
+  transport: HTTPS only
+  ref: authentication/windfall-authentication.yml
+idempotency:
+  supported: false
+  note: >-
+    No idempotency-key header or param is documented. Enrichment is a read-style
+    lookup (POST body carries the query record); repeat calls return the same
+    deterministic result in the sandbox and a fresh lookup in production.
+pagination:
+  supported: false
+  note: Single-record real-time enrichment; there are no collection/list endpoints.
+versioning:
+  style: uri-path
+  current: v1
+  ref: lifecycle/windfall-lifecycle.yml
+rate_limiting:
+  limit: 5 requests/second
+  exceeded_status: 429
+  exceeded_error: rate_limit
+  guidance: Back off and retry after a brief delay; docs show a ~0.2s inter-request delay for batch loops.
+error_envelope:
+  shape: '{ "error": "<type>", "message": "<human-readable>" }'
+  format: custom-json (not RFC 9457)
+  ref: errors/windfall-problem-types.yml
+request:
+  method: POST
+  content_type: application/json
+  correlation: >-
+    Supply an `id` in the request body; it is echoed back on the response for
+    correlation with your system of record.
+response:
+  match_flags:
+  - household_matched
+  - career_matched
+  note: >-
+    Always check household_matched and career_matched before accessing the nested
+    household/career objects — each object is omitted when its flag is false.
+  configurability: Returned household/career fields vary by account configuration.
+coverage:
+  geography: United States only
+  freshness: Updated weekly

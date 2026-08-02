@@ -1,0 +1,21 @@
+generated: '2026-07-21'
+method: derived
+status: candidate
+source: openapi/windfall-openapi-original.json
+notes: >-
+  No official hosted/remote Windfall MCP server was found on the docs, npm
+  (@modelcontextprotocol), or public MCP registries as of this pass. The tool
+  below is a DERIVED candidate mapped one-to-one from the OpenAPI operation, to
+  seed an MCP server. Auth is an org-issued API token in the X-WF-Auth-Token
+  header; a sandbox_-prefixed token targets the non-billed sandbox endpoint.
+server:
+  name: windfall
+  transport: http
+  url: null
+tools:
+- name: enrich_record
+  description: >-
+    Submit a person record (name, addresses, emails, phones, company) and receive
+    Windfall's enriched household (net worth, Windfall ID, confidence) and career
+    (LinkedIn URL, confidence) data in real time. US coverage only.
+  source_operation: openapi/windfall-openapi-original.json#enrichRecord

@@ -1,54 +1,177 @@
-generated: '2026-07-21'
-method: derived
-source: openapi/windfall-openapi-original.json
-docs: https://api-docs.windfall.com/
+generated: '2026-08-14'
+method: searched
+source: >-
+  https://api-docs.windfall.com/household-fields/ (HTTP 200) +
+  https://api-docs.windfall.com/career-fields/ (HTTP 200) +
+  https://api-docs.windfall.com/enrich/ (HTTP 200) +
+  openapi/_original/windfall-openapi-original.json
+docs: https://api-docs.windfall.com/enrich/
+note: >-
+  UPGRADED from derived to searched on 2026-08-14. The published OpenAPI types
+  `household` and `career` as bare `type: object` with no properties, so a
+  spec-only derivation could see just three fields (windfall_id, net_worth,
+  confidence and linkedin_url, job_title, confidence) taken from the response
+  EXAMPLE. Windfall documents the real payload in two dedicated reference pages
+  — 32 household fields and 26 career fields, grouped by domain — which are
+  transcribed below verbatim from those pages. This is the single largest gap
+  between Windfall's specification and its documentation.
 entities:
 - name: EnrichmentRequest
   role: request
   description: A person record to enrich; provide as many identifiers as possible for best match.
+  source: openapi/_original/windfall-openapi-original.json
+  constraints:
+  - No single field is strictly required, but a name plus at least one of address, email or phone is recommended.
+  - Each of emails, phones and addresses accepts at most 10 entries; more returns a 400.
   fields:
   - {name: id, type: string, note: Your system-of-record id; echoed back for correlation.}
   - {name: first_name, type: string}
-  - {name: last_name, type: string}
+  - {name: last_name, type: string, note: If you only have a full name, put it here and leave first_name empty.}
   - {name: addresses, type: array<Address>}
   - {name: emails, type: array<string>}
-  - {name: phones, type: array<string>, note: Defaults to +1 (US) when no country code.}
+  - {name: phones, type: array<string>, note: Defaults to +1 (US) when no country code. Formatting is flexible.}
   - {name: company_name, type: string, note: Improves career matching when names collide.}
 - name: Address
   role: value-object
   description: A property address used during matching.
   fields:
-  - {name: address, type: string}
-  - {name: city, type: string}
-  - {name: state, type: string}
-  - {name: zipcode, type: string, note: US/Canadian zip; >=5 digits, optional +4.}
+  - {name: address, type: string, note: Street address; multiple lines concatenated with a space.}
+  - {name: city, type: string, note: City or locality recognized by the USPS.}
+  - {name: state, type: string, note: Abbreviation or full name; may be inferred from the zip code.}
+  - {name: zipcode, type: string, note: US zip; >=5 digits, optional +4. Always provide for best results.}
 - name: EnrichmentResponse
   role: response
   description: Enrichment results for the submitted person record.
   fields:
   - {name: id, type: string, note: Echoed from the request.}
-  - {name: household, type: object, note: Present only when household_matched; fields vary by account config.}
-  - {name: career, type: object, note: Present only when career_matched; fields vary by account config.}
+  - {name: household, type: object|null, note: Null/absent when household_matched is false.}
+  - {name: career, type: object|null, note: Null/absent when career_matched is false.}
   - {name: household_matched, type: boolean, required: true}
   - {name: career_matched, type: boolean, required: true}
 - name: Household
   role: response-subobject
-  description: Enriched household/wealth attributes (subset shown; fields vary by account configuration).
-  fields:
-  - {name: windfall_id, type: string, note: Stable Windfall household identifier.}
-  - {name: net_worth, type: number}
-  - {name: confidence, type: number, note: 0.0-1.0 match confidence.}
+  description: >-
+    Enriched household-level wealth, property, life-event, philanthropy,
+    political and financial-signal attributes. 32 documented fields. Which
+    fields an organization receives depends on its Windfall plan.
+  source: https://api-docs.windfall.com/household-fields/
+  field_count: 32
+  groups:
+  - name: Identification & Match Quality
+    fields:
+    - {name: windfall_id, type: string, description: Windfall's unique 32-character household identifier.}
+    - {name: confidence, type: float, description: Match confidence score, 0.1 to 1.0. Higher is stronger.}
+  - name: Wealth & Net Worth
+    fields:
+    - {name: net_worth, type: number, description: Estimated household net worth. Granularity at hundreds of thousands.}
+    - {name: low_confidence_net_worth, type: number, description: Lower bound of the net worth estimate.}
+    - {name: high_confidence_net_worth, type: number, description: Upper bound of the net worth estimate.}
+    - {name: net_worth_last_calculated, type: date, description: 'Date net worth was last calculated. Format: YYYY-MM-DD.'}
+    - {name: loan_to_value, type: float, description: Outstanding loans against property values, as a decimal (0.15 = 15%).}
+  - name: Property & Assets
+    fields:
+    - {name: multi_property_owner, type: boolean, description: Household owns multiple properties.}
+    - {name: rental_property_owner, type: boolean, description: Household owns a rental property.}
+    - {name: boat_owner, type: boolean, description: Household owns a boat.}
+    - {name: plane_owner, type: boolean, description: Household owns a plane.}
+  - name: Life Events
+    fields:
+    - {name: recent_mover, type: boolean, description: Household has moved in the last 6 months.}
+    - {name: recently_divorced, type: boolean, description: Household has experienced a divorce in the last 6 months.}
+    - {name: recent_death_in_family, type: boolean, description: Household has had a death in the last 6 months.}
+  - name: Philanthropy
+    fields:
+    - {name: philanthropic_giver, type: boolean, description: Household has given philanthropically in the last 60 months.}
+    - {name: top_philanthropic_donor, type: boolean, description: At least $10K in philanthropic giving in the last 12 months.}
+    - {name: philanthropic_cause, type: array<string>, description: 'NTEE codes for causes supported (e.g. A = Arts, Culture, and Humanities).'}
+    - {name: regional_focus, type: array<string>, description: 'Geographical focus of giving: Local, State, Regional, National, International.'}
+    - {name: donor_advised_funds, type: boolean, description: Household is associated with a donor-advised fund.}
+    - {name: foundation_association, type: boolean, description: Household is associated with a foundation.}
+    - {name: foundation_officer_trustee, type: boolean, description: A member of the household is a foundation officer or trustee.}
+    - {name: nonprofit_board_member, type: boolean, description: A member of the household is a nonprofit board member.}
+  - name: Political
+    fields:
+    - {name: political_donor, type: boolean, description: Contributed to a political campaign in the last 60 months.}
+    - {name: top_political_donor, type: boolean, description: At least $10K in political donations in the last 12 months.}
+    - {name: political_party, type: string, description: Democrat, Republican, or Independent.}
+  - name: Financial Signals
+    fields:
+    - {name: money_in_motion, type: boolean, description: Recent SEC insider trading activity (at least $10K in the last 12 months).}
+    - {name: liquidity_trigger, type: boolean, description: Household has had significant recent spend.}
+    - {name: has_household_debt, type: boolean, description: Household has mortgages associated with it.}
+    - {name: crypto_interest, type: boolean, description: Household has an interest in cryptocurrency.}
+    - {name: small_business_owner, type: boolean, description: A member of the household is a small business owner.}
+    - {name: trust_association, type: boolean, description: Household is associated with a trust.}
+  - name: Data Quality
+    fields:
+    - {name: primary_address_incorrect, type: boolean, description: Windfall has a more accurate address on file for this household.}
+  notes:
+  - Boolean field timeframes (e.g. "last 6 months", "last 60 months") can be customized per customer.
+  - Windfall updates its data weekly.
 - name: Career
   role: response-subobject
-  description: Enriched career/employment attributes (subset shown; fields vary by account configuration).
-  fields:
-  - {name: linkedin_url, type: string}
-  - {name: job_title, type: string}
-  - {name: confidence, type: number, note: 0.0-1.0 match confidence.}
+  description: >-
+    Career Intelligence (CI) attributes for the matched individual — match
+    quality, current role, job-change signals, employment status and employer
+    firmographics. 26 documented fields. Requires CI on the account.
+  source: https://api-docs.windfall.com/career-fields/
+  field_count: 26
+  groups:
+  - name: Match Quality
+    fields:
+    - {name: confidence, type: float, description: Match confidence score, 0.1 to 1.0.}
+    - {name: career_data_last_updated, type: date, description: Date career data was last refreshed for this individual.}
+    - {name: linkedin_url, type: string, description: LinkedIn profile URL for the matched individual.}
+  - name: Current Role
+    fields:
+    - {name: job_title, type: string, description: Most recent job title.}
+    - {name: job_level, type: string, description: 'Job title level (e.g. C-Suite, VP, Director).'}
+    - {name: job_function, type: string, description: Job department or function.}
+    - {name: job_start_date, type: date, description: Start date of the most recent job.}
+  - name: Job Changes
+    fields:
+    - {name: recently_changed_jobs, type: boolean, description: Changed jobs in the last 6 months (includes promotions, retirement, company change).}
+    - {name: recently_promoted, type: boolean, description: Promoted in the last 6 months.}
+    - {name: recently_retired, type: boolean, description: Retired in the last 6 months.}
+    - {name: recently_changed_companies, type: boolean, description: Changed companies in the last 6 months.}
+  - name: Employment Status
+    fields:
+    - {name: possibly_student, type: boolean, description: Individual is possibly a student.}
+    - {name: possibly_unemployed, type: boolean, description: Individual is possibly unemployed.}
+    - {name: possible_additional_jobs, type: boolean, description: Individual possibly has at least one additional job.}
+  - name: Employer Details
+    fields:
+    - {name: company_name, type: string, description: Most recent employer name.}
+    - {name: company_domain, type: string, description: Employer's website domain.}
+    - {name: company_phone_number, type: string, description: Employer's headquarters phone number.}
+    - {name: company_address_line_one, type: string, description: Employer's headquarters address (line 1).}
+    - {name: company_address_line_two, type: string, description: Employer's headquarters address (line 2).}
+    - {name: company_city, type: string, description: Employer's headquarters city.}
+    - {name: company_state, type: string, description: Employer's headquarters state.}
+    - {name: company_zip, type: string, description: Employer's headquarters zip code.}
+    - {name: company_naics_code, type: string, description: Employer's NAICS industry code.}
+    - {name: company_category, type: string, description: 'Employer type (e.g. Public Company, Educational, Government Agency).'}
+    - {name: company_size_range, type: string, description: 'Employer headcount range (e.g. 1-10, 51-200, 10,000+).'}
+    - {name: company_revenue_range, type: string, description: 'Employer annual revenue range (e.g. $1-10M, $10-50M, > $1B).'}
 relationships:
 - {from: EnrichmentRequest, to: Address, kind: has_many, via: addresses}
 - {from: EnrichmentResponse, to: Household, kind: has_one, via: household}
 - {from: EnrichmentResponse, to: Career, kind: has_one, via: career}
 - {from: EnrichmentResponse, to: EnrichmentRequest, kind: belongs_to, via: id}
 id_prefixes:
-  windfall_id: 32-char hex household identifier (e.g. bde3d183ad6215f2932217ee5d6d368a)
+  windfall_id: 32-character hex household identifier (e.g. bde3d183ad6215f2932217ee5d6d368a)
+entitlement:
+  note: >-
+    The field set is NOT uniform across customers. Both reference pages state
+    that "the fields available to your organization depend on your Windfall
+    plan", and career fields additionally require Career Intelligence (CI) on
+    the account. A client must tolerate any documented field being absent.
+coverage:
+  geography: United States only
+  freshness: Weekly refresh of the underlying database
+x-evidence:
+  fetched: '2026-08-14'
+  probes:
+  - {url: 'https://api-docs.windfall.com/household-fields/', http_status: 200, finding: 32 fields in 7 groups}
+  - {url: 'https://api-docs.windfall.com/career-fields/', http_status: 200, finding: 26 fields in 5 groups}
+  - {url: 'https://api-docs.windfall.com/enrich/', http_status: 200, finding: 'request/response reference; links "all 32 household fields" and "all 26 career fields"'}

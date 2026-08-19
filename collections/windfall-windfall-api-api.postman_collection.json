@@ -1,0 +1,301 @@
+{
+  "item": [
+    {
+      "id": "f6a4446e-7c5f-4e70-aaa5-180b736666c1",
+      "name": "Windfall API",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "dce67b98-3473-42d8-8e57-54ea066e857f",
+          "name": "Enrich a person record",
+          "request": {
+            "name": "Enrich a person record",
+            "description": {
+              "content": "Submit a person record with PII fields and receive Windfall's enriched household and career data in real time.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                ""
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"<string>\",\n  \"first_name\": \"<string>\",\n  \"last_name\": \"<string>\",\n  \"company_name\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "3a5e8ea0-c9ab-477e-a42d-2e6759a850e2",
+              "name": "Enrichment results returned successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    ""
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-WF-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id\": \"16a903p\",\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Doe\",\n  \"addresses\": [\n    {\n      \"address\": \"123 Main St, Apt A\",\n      \"city\": \"San Francisco\",\n      \"state\": \"CA\",\n      \"zipcode\": \"94133\"\n    }\n  ],\n  \"emails\": [\n    \"jdoe@windfall.com\",\n    \"jane@doe.com\"\n  ],\n  \"phones\": [\n    \"415-555-1212\"\n  ],\n  \"company_name\": \"Acme Inc\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"16a903p\",\n  \"household\": {\n    \"confidence\": 1,\n    \"windfall_id\": \"bde3d183ad6215f2932217ee5d6d368a\",\n    \"net_worth\": 4200000\n  },\n  \"career\": {\n    \"confidence\": 0.7,\n    \"linkedin_url\": \"linkedin.com/in/jane-doe-san-francisco\"\n  },\n  \"household_matched\": true,\n  \"career_matched\": true\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "71c84139-79dd-4a50-9180-7887b3051d1c",
+              "name": "Malformed request body. Ensure your JSON is valid.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    ""
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-WF-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id\": \"16a903p\",\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Doe\",\n  \"addresses\": [\n    {\n      \"address\": \"123 Main St, Apt A\",\n      \"city\": \"San Francisco\",\n      \"state\": \"CA\",\n      \"zipcode\": \"94133\"\n    }\n  ],\n  \"emails\": [\n    \"jdoe@windfall.com\",\n    \"jane@doe.com\"\n  ],\n  \"phones\": [\n    \"415-555-1212\"\n  ],\n  \"company_name\": \"Acme Inc\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "419b7531-337c-4bce-8de6-3f275cb50f86",
+              "name": "Invalid or missing API token. Check your `X-WF-Auth-Token` header.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    ""
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-WF-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id\": \"16a903p\",\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Doe\",\n  \"addresses\": [\n    {\n      \"address\": \"123 Main St, Apt A\",\n      \"city\": \"San Francisco\",\n      \"state\": \"CA\",\n      \"zipcode\": \"94133\"\n    }\n  ],\n  \"emails\": [\n    \"jdoe@windfall.com\",\n    \"jane@doe.com\"\n  ],\n  \"phones\": [\n    \"415-555-1212\"\n  ],\n  \"company_name\": \"Acme Inc\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ae68b1e2-20d9-4ce3-8b3e-a528f509d2ef",
+              "name": "Rate limit exceeded. Maximum 5 requests per second. Back off and retry after a brief delay.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    ""
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-WF-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id\": \"16a903p\",\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Doe\",\n  \"addresses\": [\n    {\n      \"address\": \"123 Main St, Apt A\",\n      \"city\": \"San Francisco\",\n      \"state\": \"CA\",\n      \"zipcode\": \"94133\"\n    }\n  ],\n  \"emails\": [\n    \"jdoe@windfall.com\",\n    \"jane@doe.com\"\n  ],\n  \"phones\": [\n    \"415-555-1212\"\n  ],\n  \"company_name\": \"Acme Inc\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.windfalldata.com/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "X-WF-Auth-Token"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "620a2cc6-164c-489f-9068-6c65a639caf7",
+    "name": "Windfall Windfall API API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The Windfall API delivers enriched household and career data on a single-record basis in real time. Submit a person record with basic PII and receive enriched data about their household and career — all returned as JSON in a single request.\n\nUnlike batch enrichment jobs, the API returns results immediately, making it ideal for workflows that need data at the point of action.\n\n## Common Use Cases\n\n- **Sales** — Real-time enrichment for lead routing and grading to inform immediate action.\n- **Marketing** — Enrich new leads as they're created and enroll them in relevant nurture flows.\n- **Analytics** — Consume data in real time to power internal scoring and modeling efforts.\n\n## Authentication\n\nAll API requests require a valid token in the `X-WF-Auth-Token` header. Tokens are issued by Windfall and tied to your organization's account. All requests must be made over HTTPS.\n\n> **Keep your token secure.** Never expose your API token in client-side code or public repositories.\n\n## API Tokens\n\nEach token is issued with a set number of usage tokens that correspond to the number of records you can query. The token allocation and refresh frequency are determined by your purchase order.\n\n## Rate Limits\n\nThe API enforces a maximum of **5 requests per second**. Exceeding this limit returns a `429` status with a `rate_limit` error. Back off and retry after a brief delay.",
+      "type": "text/plain"
+    }
+  }
+}

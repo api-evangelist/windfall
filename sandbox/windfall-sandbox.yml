@@ -1,6 +1,9 @@
-generated: '2026-07-21'
+generated: '2026-08-14'
 method: searched
 source: https://api-docs.windfall.com/sandbox/
+docs: https://api-docs.windfall.com/sandbox/
+docs_last_updated: '2026-04'
+verified: '2026-08-14'
 description: >-
   Windfall publishes a non-billed sandbox that mirrors the production endpoint and
   returns deterministic responses from a fixed set of fictitious personas. It uses
@@ -63,3 +66,41 @@ example_request:
     zipcode: '30301'
   emails: [amanda.taylor@sandbox.windfall.com]
   phones: ['5553000001']
+error_simulation:
+  supported: true
+  header: X-Windfall-Sandbox-Error
+  description: >-
+    Windfall ships a deterministic error simulator on the sandbox endpoint. Add
+    the X-Windfall-Sandbox-Error header to any sandbox request and the API
+    returns the requested status with body {"message": "..."} — letting a client
+    exercise its error-handling code paths without having to trigger the
+    underlying condition. This is the only way to test the 500 and 503 paths,
+    which the docs describe as rare in the sandbox.
+  source: https://api-docs.windfall.com/sandbox/
+  values:
+  - {value: '400', status: 400, meaning: Simulated invalid input}
+  - {value: '429', status: 429, meaning: Simulated rate limit exceeded}
+  - {value: '500', status: 500, meaning: Simulated unhandled error}
+  - {value: '503', status: 503, meaning: Simulated downstream service unavailable}
+  example:
+    request: |
+      curl -X POST https://api.windfalldata.com/sandbox/v1 \
+        -H "Content-Type: application/json" \
+        -H "X-WF-Auth-Token: sandbox_YOUR_KEY" \
+        -H "X-Windfall-Sandbox-Error: 429" \
+        -d '{"first_name": "Jane", "last_name": "Doe"}'
+    response_status: 429
+    response_body: '{"message": "Rate limit exceeded"}'
+naturally_occurring_errors:
+  note: >-
+    Beyond the simulator, the sandbox returns these errors under the same real
+    conditions production does. Error responses always have shape
+    {"message": "..."}.
+  ref: errors/windfall-problem-types.yml
+  errors:
+  - {status: 400, condition: 'Malformed request body or headers, or more than 10 emails / phones / addresses.'}
+  - {status: 401, condition: Missing or invalid X-WF-Auth-Token.}
+  - {status: 403, condition: Sandbox token used on production endpoint, or production token used on sandbox.}
+  - {status: 429, condition: Rate limit exceeded (5 req/sec).}
+  - {status: 500, condition: Unhandled server error. Rare in the sandbox — use the simulator to test this path.}
+  - {status: 503, condition: Downstream service unavailable. Rare in the sandbox — use the simulator to test this path.}

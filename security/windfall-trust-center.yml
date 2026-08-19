@@ -1,16 +1,63 @@
-generated: '2026-07-21'
+generated: '2026-08-14'
 method: searched
 probe: false
-url: https://www.windfall.com/security
+url: https://www.windfall.com/platform/privacy-security
+also: https://www.windfall.com/security
 certifications:
-- SOC 2 Type 2
+- name: SOC 2 Type 2
+  status: attested
+  continuity: 5 consecutive years
+  evidence: https://www.windfall.com/company/news/windfall-secures-5th-consecutive-soc-2-type-2-certification
+- name: CCPA / California registered data broker
+  status: registered
+  evidence: https://www.windfall.com/platform/privacy-security
 evidence:
+- source: https://www.windfall.com/platform/privacy-security
+  keywords:
+  - soc 2 type 2 compliant
+  - registered data broker in the state of California
+  - fully compliant with CCPA
 - source: https://www.windfall.com/security
   keywords:
-  - soc 2 type 2
-  - aicpa soc badge
+  - TLS/HTTPS, SFTP, SSL certificates, data encryption
+  - AES 256-bit server-side encryption
+  - OWASP-aligned development standards
+  - intrusion monitoring and data loss prevention
+- source: https://www.windfall.com/company/news/windfall-secures-5th-consecutive-soc-2-type-2-certification
+  keywords:
+  - 5th consecutive SOC 2 Type 2 certification
+trust_portal:
+  exists: false
+  probes:
+  - {url: 'https://trust.windfall.com', status: 404}
+  note: >-
+    No dedicated trust portal, evidence room, subprocessor list, or downloadable
+    attestation. Windfall publishes a narrative security page instead; obtaining
+    the SOC 2 report goes through sales.
+vulnerability_disclosure:
+  exists: false
+  security_txt: false
+  bug_bounty: false
+  contact: null
+  probes:
+  - {url: 'https://www.windfall.com/.well-known/security.txt', status: 404}
+  - {url: 'https://windfall.com/.well-known/security.txt', status: 404}
+  - {url: 'https://api-docs.windfall.com/.well-known/security.txt', status: 404}
+  note: >-
+    No responsible-disclosure policy, no security.txt on any host, no
+    HackerOne/Bugcrowd/Intigriti program, and no published security contact
+    address. A researcher who finds a flaw in an API that moves third-party PII
+    has no documented channel. NO Security or VulnerabilityDisclosure pointer is
+    wired, because there is no program to point at.
+not_claimed:
+- ISO 27001
+- PCI DSS
+- HIPAA
+- FedRAMP
+- GDPR
 notes: >-
-  Windfall publishes a SOC 2 Type 2 attestation (with an AICPA SOC 2 badge and a
-  "Read Our SOC 2 Type 2 Announcement" link) on its security page. No dedicated
-  trust portal (trust.windfall.com), bug bounty, responsible-disclosure page, or
-  security.txt was found. No ISO 27001 / PCI / HIPAA / FedRAMP claims found.
+  Re-verified 2026-08-14. Windfall's compliance posture is a sustained SOC 2
+  Type 2 program plus statutory California data-broker registration — the latter
+  being the regime that actually governs this API, since the request body is
+  third-party PII and the response is inferred wealth, philanthropy and
+  political-giving data about a natural person.

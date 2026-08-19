@@ -1,0 +1,135 @@
+generated: '2026-08-14'
+method: probed
+source: >-
+  unauthenticated registry metadata queries (registry.npmjs.org, pypi.org) +
+  https://api.github.com/orgs/WindfallData/repos +
+  https://api-docs.windfall.com/quickstart/
+name: Windfall Packages & SDKs
+package_count: 0
+official_package_count: 0
+packages: []
+summary: >-
+  Windfall publishes NO first-party client library or SDK in any public package
+  registry. The Windfall API is a single POST endpoint authenticated with one
+  header, and the company's own Quickstart teaches it with raw cURL, `requests`
+  (Python) and `fetch` (Node.js) — there is no `pip install windfall` or
+  `npm i @windfall/...` step anywhere in the documentation. This is a recorded
+  absence, checked against the registries, not an unchecked field. NO `SDKs`
+  pointer is emitted in apis.yml, because there is no SDK to point at.
+registries_probed:
+- registry: npm
+  method: full-text search + exact lookups
+  queried:
+  - windfall
+  - '@windfall/sdk'
+  - windfall-sdk
+  - windfalldata
+  first_party_hits: 0
+  version: null
+  published: null
+  result: >-
+    Zero first-party results. The npm name `windfall` is held by an unrelated
+    2012 "inheritance based CMS" (v0.0.0, published 2012-12-21,
+    github.com/davidcameron/windfall) and the `@windfallswap/*` scope belongs to
+    an unrelated 2020 DeFi protocol. Neither is Windfall Data, Inc.
+- registry: pypi
+  method: exact lookup
+  queried:
+  - windfall
+  - windfall-api
+  - windfalldata
+  first_party_hits: 0
+  version: null
+  published: null
+  result: HTTP 404 on every lookup.
+- registry: maven-central
+  queried: []
+  first_party_hits: 0
+  version: null
+  published: null
+  result: not searched — no JVM client surface is indicated anywhere in the documentation.
+- registry: nuget
+  queried: []
+  first_party_hits: 0
+  version: null
+  published: null
+  result: not searched — no .NET client surface is indicated anywhere in the documentation.
+- registry: rubygems
+  queried: []
+  first_party_hits: 0
+  version: null
+  published: null
+  result: not searched — no Ruby client surface is indicated anywhere in the documentation.
+- registry: pkg.go.dev
+  queried: []
+  first_party_hits: 0
+  version: null
+  published: null
+  result: not searched — no Go client surface is indicated anywhere in the documentation.
+- registry: cdn
+  queried: []
+  first_party_hits: 0
+  version: null
+  published: null
+  result: >-
+    No CDN- or script-tag-distributed build exists. Windfall's own guidance is
+    that the API must NOT be called from a browser (the token is org-scoped and
+    the docs say never to expose it in client-side code), so there is no
+    embeddable front-end bundle to version.
+github_org:
+  url: https://github.com/WindfallData
+  api: https://api.github.com/orgs/WindfallData
+  first_party_libraries: 0
+  note: >-
+    The WindfallData GitHub organization exists and is public, but contains no
+    client library for the Windfall API. Its public repositories are internal
+    data-engineering utilities and forks of third-party projects — recorded here
+    so a later round does not re-open this.
+  repos:
+  - name: 990_long
+    language: Python
+    pushed: '2017-12-10'
+    kind: internal-tool
+    note: Generates a long-form version of every field in the IRS 990 — nonprofit data tooling, not an API client.
+  - name: beam-bigquery-utils
+    language: Java
+    pushed: '2025-11-13'
+    kind: internal-tool
+    note: Utilities for working with BigQuery in Apache Beam.
+  - name: google-cloud-java
+    language: Java
+    pushed: '2022-04-18'
+    kind: fork
+    note: Fork of the Google Cloud Client Library for Java.
+  - name: shap
+    language: Jupyter Notebook
+    pushed: '2021-11-15'
+    kind: fork
+    note: Fork of the SHAP model-explainability library.
+  - name: redis-agent-memory-server
+    pushed: '2026-08-12'
+    kind: fork
+    note: >-
+      Self-described "Upstream Fork" of the Redis agent memory server. Actively
+      pushed, and a signal that Windfall is building agent infrastructure
+      internally, but it is not a Windfall API client and is not published to a
+      registry.
+documented_client_code:
+  note: >-
+    Windfall documents integration in three languages as inline snippets rather
+    than as installable packages. These are copy-paste examples, not distributed
+    artifacts, and are deliberately NOT recorded as packages.
+  languages:
+  - {language: shell, client: curl, source: 'https://api-docs.windfall.com/quickstart/'}
+  - {language: python, client: requests, source: 'https://api-docs.windfall.com/quickstart/'}
+  - {language: javascript, client: fetch, source: 'https://api-docs.windfall.com/quickstart/'}
+x-evidence:
+  fetched: '2026-08-14'
+  probes:
+  - {url: 'https://registry.npmjs.org/-/v1/search?text=windfall', http_status: 200, finding: no first-party package}
+  - {url: 'https://pypi.org/pypi/windfall/json', http_status: 404}
+  - {url: 'https://pypi.org/pypi/windfall-api/json', http_status: 404}
+  - {url: 'https://pypi.org/pypi/windfalldata/json', http_status: 404}
+  - {url: 'https://api.github.com/orgs/WindfallData', http_status: 200}
+  - {url: 'https://api.github.com/orgs/WindfallData/repos?per_page=100', http_status: 200, finding: 5 public repos, 0 client libraries}
+  - {url: 'https://api-docs.windfall.com/quickstart/', http_status: 200, finding: cURL/Python/Node snippets, no install step}

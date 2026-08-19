@@ -1,7 +1,12 @@
-generated: '2026-07-21'
+generated: '2026-08-14'
 method: searched
-source: openapi/windfall-openapi-original.json
+source: >-
+  https://api-docs.windfall.com/authentication/ (HTTP 200) +
+  https://api-docs.windfall.com/sandbox/ (HTTP 200) +
+  https://api-docs.windfall.com/examples/ (HTTP 200) +
+  openapi/_original/windfall-openapi-original.json
 docs: https://api-docs.windfall.com/
+docs_last_updated: '2026-04'
 authentication:
   style: api-key
   header: X-WF-Auth-Token
@@ -43,6 +48,49 @@ response:
     Always check household_matched and career_matched before accessing the nested
     household/career objects — each object is omitted when its flag is false.
   configurability: Returned household/career fields vary by account configuration.
+request_constraints:
+  max_emails: 10
+  max_phones: 10
+  max_addresses: 10
+  exceeded_status: 400
+  source: https://api-docs.windfall.com/sandbox/
+  note: >-
+    Each identifier array accepts at most 10 entries; exceeding any of the three
+    returns a 400. This ceiling appears only in the Sandbox page's
+    naturally-occurring-errors table — it is not in the OpenAPI schema, so a
+    client generated from the spec will not enforce it.
+matching:
+  note: >-
+    Matching is combination-based, not field-based. A request resolves when one
+    matcher combination is satisfiable. Name alone never matches, and a partial
+    address (street without zipcode) never matches. Adding extra non-matching
+    fields is harmless.
+  combinations:
+  - {name: Email, required_fields: [emails]}
+  - {name: Full address, required_fields: ['addresses[].address (number + street)', 'addresses[].zipcode']}
+  - {name: Phone + name, required_fields: [phones, first_name, last_name]}
+  source: https://api-docs.windfall.com/sandbox/
+no_match_semantics:
+  status: 200
+  note: >-
+    A no-match is a successful 200, not an error. Branch on household_matched /
+    career_matched, never on the status code.
+  ref: errors/windfall-problem-types.yml
+testing:
+  sandbox: https://api.windfalldata.com/sandbox/v1
+  error_simulation_header: X-Windfall-Sandbox-Error
+  error_simulation_values: ['400', '429', '500', '503']
+  note: >-
+    The sandbox is deterministic and non-billed, and ships a header-driven error
+    simulator — the only way to exercise the 500 and 503 code paths.
+  ref: sandbox/windfall-sandbox.yml
+entitlement:
+  note: >-
+    Response field availability is contractual. Which household fields return
+    depends on the customer's Windfall plan, and any career field requires
+    Career Intelligence (CI) on the account. Treat every documented field as
+    optional.
+  ref: data-model/windfall-data-model.yml
 coverage:
   geography: United States only
   freshness: Updated weekly

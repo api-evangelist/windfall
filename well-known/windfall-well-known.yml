@@ -1,21 +1,57 @@
-generated: '2026-07-21'
-method: searched
+generated: '2026-08-14'
+method: probed
 note: >-
-  No /.well-known discovery documents were served. The API host
-  (api.windfalldata.com) returns 401 for every /.well-known path (auth-walled),
-  and the marketing host (www.windfall.com) returns 404. No documents saved.
+  No /.well-known discovery document is served on ANY Windfall host. Re-probed
+  2026-08-14 across all three hosts in the profile, including the docs host
+  (api-docs.windfall.com) which was not covered in the 2026-07-21 pass. The API
+  host (api.windfalldata.com) answers 401 with
+  {"message":"No API key found in request"} for every path — the gateway
+  authenticates before routing, so nothing under /.well-known is reachable
+  anonymously. The marketing host (www.windfall.com) and the docs host both
+  return 404 with an HTML shell. Zero documents saved. NO WellKnown or
+  SecurityTxt pointer is emitted in apis.yml: this file records an absence, and
+  a pointer would assert Windfall serves a surface it does not.
+documents_saved: 0
 hosts:
 - host: https://api.windfalldata.com
+  behavior: gateway returns 401 JSON before routing; no anonymous /.well-known surface
   documents:
   - {path: /.well-known/security.txt, status: 401}
   - {path: /.well-known/openid-configuration, status: 401}
   - {path: /.well-known/oauth-authorization-server, status: 401}
   - {path: /.well-known/api-catalog, status: 401}
   - {path: /.well-known/ai-plugin.json, status: 401}
+  - {path: /.well-known/agent-card.json, status: 401}
 - host: https://www.windfall.com
+  behavior: HTML 404 page
   documents:
   - {path: /.well-known/security.txt, status: 404}
   - {path: /.well-known/openid-configuration, status: 404}
   - {path: /.well-known/oauth-authorization-server, status: 404}
   - {path: /.well-known/api-catalog, status: 404}
   - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+- host: https://api-docs.windfall.com
+  behavior: Firebase Hosting "Page Not Found" HTML shell
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+- host: https://windfall.com
+  behavior: HTML 404 page
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+llms_txt:
+  note: >-
+    /llms.txt was probed on both the docs host and the marketing host as part of
+    the same sweep and 404s on both. The llms/ artifact in this repo is a
+    GENERATED catalog file, not a provider-published document.
+  documents:
+  - {url: 'https://api-docs.windfall.com/llms.txt', status: 404}
+  - {url: 'https://api-docs.windfall.com/llms-full.txt', status: 404}
+  - {url: 'https://www.windfall.com/llms.txt', status: 404}

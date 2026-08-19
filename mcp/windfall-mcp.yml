@@ -1,21 +1,67 @@
-generated: '2026-07-21'
+generated: '2026-08-14'
 method: derived
 status: candidate
-source: openapi/windfall-openapi-original.json
+source: openapi/_original/windfall-openapi-original.json
 notes: >-
-  No official hosted/remote Windfall MCP server was found on the docs, npm
-  (@modelcontextprotocol), or public MCP registries as of this pass. The tool
-  below is a DERIVED candidate mapped one-to-one from the OpenAPI operation, to
-  seed an MCP server. Auth is an org-issued API token in the X-WF-Auth-Token
-  header; a sandbox_-prefixed token targets the non-billed sandbox endpoint.
+  Windfall ships NO MCP server — not hosted, not stdio. Re-searched 2026-08-14
+  across npm (no @windfall/* or windfall-mcp package), PyPI, the WindfallData
+  GitHub organization (5 public repos, none an MCP server), the docs site (9
+  pages, no MCP page), and public MCP registries. https://www.windfall.com/mcp
+  returns 404 and there is no /.well-known/ai-plugin.json or agent card on any
+  host.
+
+  This is a notable gap rather than an ordinary absence: Windfall's own May 2026
+  API announcement names MCP explicitly — "the emergence of MCP (Model Context
+  Protocol) as a standard for connecting structured data to AI agents" — and
+  positions the REST API as the way "product teams building AI agents or
+  MCP-connected workflows" reach Windfall data. The company frames MCP as the
+  demand driver and leaves the customer to build the server.
+
+  The tool below is a DERIVED candidate mapped one-to-one from the single
+  OpenAPI operation, to seed such a server. It is not a Windfall product and no
+  endpoint is asserted. Auth is an org-issued API token in the X-WF-Auth-Token
+  header; a sandbox_-prefixed token targets the non-billed sandbox endpoint,
+  which is the right target for tool development because it is deterministic and
+  consumes no credits.
 server:
   name: windfall
-  transport: http
+  transport: null
   url: null
 tools:
 - name: enrich_record
   description: >-
-    Submit a person record (name, addresses, emails, phones, company) and receive
-    Windfall's enriched household (net worth, Windfall ID, confidence) and career
-    (LinkedIn URL, confidence) data in real time. US coverage only.
-  source_operation: openapi/windfall-openapi-original.json#enrichRecord
+    Submit a person record (name, addresses, emails, phones, company) and
+    receive Windfall's enriched household and career data in real time. US
+    coverage only. Returns HTTP 200 with household_matched / career_matched
+    false when no match is found — a no-match is not an error.
+  source_operation: openapi/_original/windfall-openapi-original.json#enrichRecord
+  input_schema_ref: openapi/_original/windfall-openapi-original.json#/components/schemas/EnrichmentRequest
+  output_schema_ref: openapi/_original/windfall-openapi-original.json#/components/schemas/EnrichmentResponse
+  consequence: read
+  note: >-
+    The request body carries third-party PII and the response carries inferred
+    wealth and political-giving attributes about a natural person. Any agent
+    binding should treat this as regulated data movement (Windfall is a
+    registered California data broker) and gate it accordingly — see
+    agentic-access/windfall-agentic-access.yml.
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: api-key
+  verified: searched
+  tools: 1
+  checked: '2026-08-14'
+  note: >-
+    mode is `none` because nobody ships a server — this repo holds a derived
+    candidate only. No endpoint URL is guessed.
+x-evidence:
+  fetched: '2026-08-14'
+  probes:
+  - {url: 'https://www.windfall.com/mcp', http_status: 404}
+  - {url: 'https://api-docs.windfall.com/', http_status: 200, finding: '9 documented pages; no MCP page in the navigation'}
+  - {url: 'https://registry.npmjs.org/-/v1/search?text=windfall', http_status: 200, finding: no Windfall MCP package}
+  - {url: 'https://api.github.com/orgs/WindfallData/repos?per_page=100', http_status: 200, finding: no MCP server repo}
+  - {url: 'https://api.windfalldata.com/.well-known/agent-card.json', http_status: 401}
+  - {url: 'https://www.windfall.com/.well-known/agent-card.json', http_status: 404}

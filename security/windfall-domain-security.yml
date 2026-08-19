@@ -1,19 +1,33 @@
-generated: '2026-07-21'
+generated: '2026-08-14'
 method: probed
 source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
 hosts:
-- host: windfalldata.com
+- host: www.windfall.com
   https: true
   tls_version: TLSv1.3
-  cert_expires: Sep 16 10:23:04 2026 GMT
+  cert_expires: Oct  9 17:46:57 2026 GMT
   hsts: true
   hsts_max_age: 31536000
+- host: api-docs.windfall.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Nov  2 19:29:59 2026 GMT
+  hsts: true
+  hsts_max_age: 31556926
 - host: api.windfalldata.com
   https: true
   tls_version: TLSv1.3
   cert_expires: Oct  4 17:03:07 2026 GMT
   hsts: null
 domains:
+- domain: windfall.com
+  dnssec: true
+  caa:
+  - 0 issue "letsencrypt.org"
+  - 0 issue "pki.goog"
+  spf: true
+  dmarc: true
+  dmarc_policy: none
 - domain: windfalldata.com
   dnssec: true
   caa:

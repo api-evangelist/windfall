@@ -1,24 +1,81 @@
-generated: '2026-07-21'
+generated: '2026-08-14'
 method: searched
-source: openapi/windfall-openapi-original.json
+source: >-
+  https://api-docs.windfall.com/ (HTTP 200) +
+  https://api-docs.windfall.com/authentication/ (HTTP 200) +
+  https://www.windfall.com/blog/powering-real-time-ai-native-workflows-opening-the-windfall-api-to-all-customers-and-partners
 docs: https://api-docs.windfall.com/
 versioning:
   scheme: uri-path
   current: v1
   base_url: https://api.windfalldata.com/v1
+  sandbox_base_url: https://api.windfalldata.com/sandbox/v1
+  spec_version: 1.0.0
+  note: A single major version carried in the URI path. No version header, no date-based pinning, no preview channel.
+availability:
+  general_availability: '2026-05'
+  announced: '2026-05-04'
+  announcement_url: https://www.windfall.com/blog/powering-real-time-ai-native-workflows-opening-the-windfall-api-to-all-customers-and-partners
+  note: >-
+    The API existed before 2026 but was gated to selected engagements. On
+    2026-05-04 Windfall's CEO announced it was being opened to ALL existing
+    customers and partners, with monthly credits added to existing
+    subscriptions at no additional cost and rollout completing by May 2026. The
+    same post reports API requests up over 550% in the preceding ~90 days. This
+    is the operative lifecycle event for the API: it moved from a bespoke
+    entitlement to a standard part of the product.
 deprecation:
   policy_url: null
-  sunset_header: null
-  note: No published deprecation policy or RFC 8594 Sunset/Deprecation header support found.
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  note: >-
+    No published deprecation policy and no RFC 8594 Sunset/Deprecation header
+    support. With one operation on one version this has not yet been tested,
+    but a consumer has no contractual notice period to rely on.
+changelog:
+  published: false
+  url: null
+  probes:
+  - {url: 'https://api-docs.windfall.com/changelog/', status: 404}
+  - {url: 'https://www.windfall.com/changelog', status: 404}
+  note: >-
+    No dated API changelog or release-notes feed exists. The docs footer carries
+    a single "Last updated April 2026" stamp on each page, and product-level
+    announcements appear as blog and newsroom posts
+    (https://www.windfall.com/company/news), which are marketing-dated rather
+    than versioned. No ChangeLog pointer is wired, because there is nothing to
+    point at.
 sla:
   url: null
+  published: false
   rate_limit: 5 requests/second
-  response_time: < 1 second (per docs)
-  data_freshness: Updated weekly
+  response_time: under one second per record (stated in the docs and the use-case pages, not contractual)
+  data_freshness: database fully rebuilt weekly
   coverage: United States only
-status_page: null
+  note: >-
+    No uptime commitment, credit schedule or support-response target is
+    published. The stated latency and freshness figures are product claims on
+    marketing and documentation pages, not an SLA document.
+status_page:
+  published: false
+  probes:
+  - {url: 'https://status.windfall.com', status: 404}
+  - {url: 'https://status.windfalldata.com', status: 404}
+  note: >-
+    No public status page on either domain. There is therefore no incident
+    history, no subscribable uptime feed, and no way for an integrator to
+    distinguish a Windfall outage from their own — notable for an API whose
+    documented failure modes include a 503 for downstream unavailability. No
+    StatusPage pointer is wired.
 deprecated_operations: []
-notes: >-
-  No public status page, changelog, or roadmap was found (status.windfall.com,
-  status.windfalldata.com, /changelog all 404 as of this pass). Versioning is a
-  single major version (v1) carried in the URI path.
+docs_last_updated: '2026-04'
+x-evidence:
+  fetched: '2026-08-14'
+  probes:
+  - {url: 'https://api-docs.windfall.com/', http_status: 200}
+  - {url: 'https://api-docs.windfall.com/changelog/', http_status: 404}
+  - {url: 'https://www.windfall.com/changelog', http_status: 404}
+  - {url: 'https://status.windfall.com', http_status: 404}
+  - {url: 'https://status.windfalldata.com', http_status: 404}
+  - {url: 'https://api-docs.windfall.com/static/openapi.json', http_status: 200, finding: info.version 1.0.0, unchanged since the 2026-07-21 pass}

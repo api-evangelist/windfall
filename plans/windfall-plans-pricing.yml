@@ -1,0 +1,65 @@
+generated: '2026-08-14'
+method: searched
+source: >-
+  https://www.windfall.com/sitemap.xml (HTTP 200, 146 URLs) +
+  https://www.windfall.com/pricing (HTTP 404) +
+  https://api-docs.windfall.com/authentication/ (HTTP 200) +
+  https://www.windfall.com/blog/powering-real-time-ai-native-workflows-opening-the-windfall-api-to-all-customers-and-partners
+name: Windfall Plans & Pricing
+plan_count: 0
+plans: []
+currency: null
+public_pricing: false
+pricing_model:
+  type: contact-sales
+  self_serve: false
+  free_tier: false
+  trial: false
+  published_prices: false
+  note: >-
+    Windfall publishes no price, no tier table and no plan names. Every
+    commercial call to action on the site is "Request a Demo" or "Contact".
+    The company's own sitemap.xml (146 URLs, fetched 2026-08-14) contains no
+    /pricing, /plans or /packages route, and https://www.windfall.com/pricing
+    returns HTTP 404.
+api_pricing:
+  published: false
+  metered: true
+  metric: credits (usage tokens = records queryable)
+  quota_source: purchase order
+  note: >-
+    API consumption IS metered — but the rate is contractual, not published.
+    Windfall's own Authentication page states that "each token is issued with a
+    set number of usage tokens that correspond to the number of records you can
+    query" and that "the token allocation and refresh frequency are determined
+    by your purchase order". Both the quota and the refresh cadence are rendered
+    on that page literally as "Per your purchase order". No dollar figure,
+    per-record rate, or credit pack price is published anywhere.
+  bundled_entitlement:
+    announced: '2026-05-04'
+    source: https://www.windfall.com/blog/powering-real-time-ai-native-workflows-opening-the-windfall-api-to-all-customers-and-partners
+    note: >-
+      In May 2026 Windfall opened the API to all existing customers and partners
+      at no additional cost, with "a limited number of monthly credits based on
+      their existing Windfall subscription". So API access is an entitlement
+      attached to an existing (unpriced) platform subscription rather than a
+      product with its own price list. Access is provisioned by Windfall — the
+      documented path to more quota is "Contact your Windfall account
+      representative", not a checkout.
+  sandbox:
+    billed: false
+    note: >-
+      The sandbox environment (https://api.windfalldata.com/sandbox/v1) is
+      explicitly non-billed and does not draw from the token quota. It is the
+      only free API surface Windfall publishes, and it still requires a
+      Windfall-issued `sandbox_`-prefixed token.
+sales_contact: https://www.windfall.com/contact
+x-evidence:
+  fetched: '2026-08-14'
+  probes:
+  - {url: 'https://www.windfall.com/pricing', http_status: 404}
+  - {url: 'https://www.windfall.com/pricing/', http_status: 404}
+  - {url: 'https://www.windfall.com/plans', http_status: 404}
+  - {url: 'https://www.windfall.com/sitemap.xml', http_status: 200, finding: 146 URLs, no pricing or plans route}
+  - {url: 'https://api-docs.windfall.com/authentication/', http_status: 200, finding: 'quota and refresh cadence both stated as "Per your purchase order"'}
+  - {url: 'https://api-docs.windfall.com/sandbox/', http_status: 200, finding: sandbox declared non-billed}

@@ -1,32 +1,111 @@
-generated: '2026-07-21'
+generated: '2026-08-14'
 method: searched
-source: openapi/windfall-openapi-original.json
-docs: https://www.windfall.com/security
+source: >-
+  openapi/_original/windfall-openapi-original.json +
+  https://www.windfall.com/security (HTTP 200) +
+  https://www.windfall.com/platform/privacy-security (HTTP 200) +
+  https://api-docs.windfall.com/authentication/ (HTTP 200)
+docs: https://www.windfall.com/platform/privacy-security
 standards:
 - id: oauth2
   conforms: false
+  evidence: No OAuth 2.0 surface. Auth is a single static org-issued header token.
 - id: oidc
   conforms: false
+  evidence: No /.well-known/openid-configuration on any host (404/401 — see well-known/windfall-well-known.yml).
 - id: apikey-auth
   conforms: true
-  evidence: openapi securityScheme type apiKey (X-WF-Auth-Token header)
+  evidence: OpenAPI securityScheme type apiKey (X-WF-Auth-Token header), confirmed on the Authentication docs page.
 - id: rfc9457-problem-details
   conforms: false
-  evidence: errors returned as a custom {error, message} JSON envelope, not application/problem+json
+  evidence: >-
+    Errors are returned as a custom {error, message} / {message} JSON envelope
+    with content type application/json, not application/problem+json.
 - id: json-over-https
   conforms: true
-  evidence: HTTPS-only; requests and responses are application/json
+  evidence: >-
+    HTTPS-only ("All requests must be made over HTTPS"); requests and responses
+    are application/json. TLS 1.3 with HSTS on windfall.com and api-docs.windfall.com.
 - id: pagination
   conforms: false
-  evidence: single-record real-time enrichment; no collection endpoints
+  evidence: Single-record real-time enrichment; no collection endpoints.
 - id: idempotency
   conforms: false
-  evidence: no idempotency-key header documented
+  evidence: No Idempotency-Key header or equivalent is documented.
+- id: rfc8594-sunset
+  conforms: false
+  evidence: No Sunset or Deprecation response headers and no deprecation policy published.
 - id: soc2-type2
   conforms: true
-  evidence: SOC 2 Type 2 attestation announced on https://www.windfall.com/security
+  evidence: >-
+    SOC 2 Type 2 attestation, published on https://www.windfall.com/security and
+    https://www.windfall.com/platform/privacy-security. Windfall's own newsroom
+    records a 5th consecutive SOC 2 Type 2 certification
+    (https://www.windfall.com/company/news/windfall-secures-5th-consecutive-soc-2-type-2-certification),
+    which makes this a sustained program rather than a one-off audit.
+- id: ccpa
+  conforms: true
+  evidence: >-
+    "Windfall is a registered data broker in the state of California, and fully
+    compliant with CCPA" — https://www.windfall.com/platform/privacy-security.
+    A registered-data-broker filing is a statutory obligation, not a
+    self-assertion, and it is the regime that most directly governs this API:
+    the request body is third-party PII and the response is inferred wealth and
+    career data about a natural person.
+- id: owasp
+  conforms: partial
+  evidence: >-
+    "Our development standards are in line with such groups as the Open Web
+    Application Security Project (OWASP)" — https://www.windfall.com/security.
+    A stated alignment, with no ASVS level, test report, or scope named.
+- id: gdpr
+  conforms: unknown
+  evidence: >-
+    No GDPR claim found. Consistent with the product's stated coverage — the
+    data set is United States only.
+- id: iso27001
+  conforms: false
+  evidence: No ISO 27001 claim found on any Windfall page.
+- id: pci-dss
+  conforms: false
+  evidence: No PCI DSS claim found; Windfall handles no cardholder data.
+- id: hipaa
+  conforms: false
+  evidence: >-
+    No HIPAA claim found, despite a healthcare solutions page — the healthcare
+    use case is donor/philanthropy fundraising, not PHI.
+- id: fedramp
+  conforms: false
+  evidence: No FedRAMP claim found.
 compliance:
   published: true
   programs:
-  - SOC 2 Type 2
-  source: https://www.windfall.com/security
+  - name: SOC 2 Type 2
+    status: attested
+    continuity: 5 consecutive years
+    source: https://www.windfall.com/platform/privacy-security
+  - name: CCPA / California data broker registration
+    status: registered
+    source: https://www.windfall.com/platform/privacy-security
+  controls_published:
+    source: https://www.windfall.com/security
+    areas:
+    - Transmission of data (TLS/HTTPS, SFTP, SSL certificates, encryption; per-customer logical isolation)
+    - Data storage and security (US data centers, server-side AES-256 encryption)
+    - Data backup and recovery (documented DR plan; full weekly + daily incremental backups)
+    - Application security (OWASP-aligned development standards, password controls, HTTPS-only web interface)
+    - Systems monitoring (intrusion monitoring and data loss prevention)
+    - Safe handling of data (background screening, NDA/PIIA, least-privilege access)
+    - Usage and ownership of data (customer retains ownership; PII never redistributed to other customers)
+  note: >-
+    Windfall publishes a narrative security page rather than a trust portal.
+    There is no downloadable evidence pack, no subprocessor list, and no
+    machine-readable attestation — a customer requesting the SOC 2 report goes
+    through sales.
+x-evidence:
+  fetched: '2026-08-14'
+  probes:
+  - {url: 'https://www.windfall.com/security', http_status: 200}
+  - {url: 'https://www.windfall.com/platform/privacy-security', http_status: 200, finding: SOC 2 Type 2 + CA registered data broker + CCPA}
+  - {url: 'https://trust.windfall.com', http_status: 404, finding: no dedicated trust portal}
+  - {url: 'https://www.windfall.com/.well-known/security.txt', http_status: 404}

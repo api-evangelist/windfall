@@ -1,7 +1,22 @@
-generated: '2026-07-21'
+generated: '2026-08-14'
 method: generated
+source: >-
+  openapi/windfall-windfall-api-api-openapi.yml +
+  https://api-docs.windfall.com/ (quickstart, sandbox, examples, field references)
+note: >-
+  The Windfall API exposes exactly one operation (enrichRecord), so the skills
+  below are cut by FLOW rather than by endpoint: one for calling it in
+  production, one for building and verifying an integration against the
+  non-billed sandbox. Every operationId, header, status code and persona name is
+  taken from Windfall's own published specification and documentation.
 skills:
 - file: windfall-enrich-person-record.md
   name: Enrich a person record with Windfall
-  api: openapi/windfall-openapi-original.json
+  api: openapi/windfall-windfall-api-api-openapi.yml
   operations: [enrichRecord]
+  environment: production
+- file: windfall-sandbox-integration-test.md
+  name: Test a Windfall integration against the sandbox
+  api: openapi/windfall-windfall-api-api-openapi.yml
+  operations: [enrichRecord]
+  environment: sandbox

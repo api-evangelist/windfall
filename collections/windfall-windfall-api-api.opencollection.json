@@ -1,0 +1,41 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Windfall Windfall API API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "X-WF-Auth-Token",
+      "value": "{{X-WF-Auth-Token}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Windfall API",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Enrich a person record",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.windfalldata.com/v1/",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Submit a person record with PII fields and receive Windfall's enriched household and career data in real time."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

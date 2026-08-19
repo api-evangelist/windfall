@@ -1,35 +1,116 @@
-generated: '2026-07-21'
-method: derived
-source: openapi/windfall-openapi-original.json
-docs: https://api-docs.windfall.com/examples/
+generated: '2026-08-14'
+method: searched
+source: >-
+  https://api-docs.windfall.com/authentication/ (HTTP 200) +
+  https://api-docs.windfall.com/sandbox/ (HTTP 200) +
+  https://api-docs.windfall.com/examples/ (HTTP 200) +
+  openapi/_original/windfall-openapi-original.json
+docs: https://api-docs.windfall.com/authentication/
 format: custom-json
 envelope:
   description: >-
-    Errors are returned as a JSON object with an `error` type identifier and a
-    human-readable `message`. This is NOT RFC 9457 application/problem+json.
+    Errors are returned as a JSON object with a human-readable `message`. The
+    OpenAPI's Error schema also declares an `error` type identifier alongside
+    `message` (e.g. `rate_limit` on a 429), while the sandbox documentation
+    states error responses "always have shape {"message": "..."}". Treat
+    `message` as always present and `error` as the machine-readable
+    discriminator when supplied. This is NOT RFC 9457 application/problem+json,
+    and there is no `type`, `title`, `status`, `detail` or `instance` member.
   fields:
-    error: Error type identifier (e.g. rate_limit).
-    message: Human-readable error message.
+    error: Error type identifier (e.g. rate_limit). Declared in the OpenAPI Error schema.
+    message: Human-readable error message. Always present.
+  content_type: application/json
+  rfc9457: false
 problems:
 - status: 400
   error: bad_request
-  title: Malformed request body
-  remediation: Ensure your JSON is valid and well-formed.
-  source_operation: openapi/windfall-openapi-original.json#enrichRecord
+  title: Malformed request
+  detail: >-
+    Malformed request body or headers. The docs also name a hard input ceiling:
+    a request carrying MORE THAN 10 emails, phones, or addresses is rejected
+    with a 400.
+  remediation: >-
+    Ensure your JSON is valid and well-formed, and cap each of the `emails`,
+    `phones` and `addresses` arrays at 10 entries.
+  source_operation: openapi/_original/windfall-openapi-original.json#enrichRecord
+  source: https://api-docs.windfall.com/sandbox/
 - status: 401
   error: unauthorized
   title: Invalid or missing API token
-  remediation: Check your X-WF-Auth-Token header; the token must be issued by Windfall and valid.
-  source_operation: openapi/windfall-openapi-original.json#enrichRecord
+  detail: Missing or invalid X-WF-Auth-Token header.
+  remediation: >-
+    Check your X-WF-Auth-Token header; the token must be issued by Windfall and
+    valid. Tokens are not self-service — contact your account representative.
+  source_operation: openapi/_original/windfall-openapi-original.json#enrichRecord
+  source: https://api-docs.windfall.com/authentication/
 - status: 403
   error: forbidden
   title: Token/environment mismatch
-  remediation: >-
+  detail: >-
     A production token was used against the sandbox endpoint or a sandbox_ token
-    against production. Use the token matching the environment.
+    against production. Production and sandbox tokens are not interchangeable.
+  remediation: Use the token matching the environment you are calling.
   source_operation: docs:sandbox
+  source: https://api-docs.windfall.com/authentication/
+  note: >-
+    Documented on the Authentication and Sandbox pages but NOT declared in the
+    OpenAPI responses for enrichRecord — a gap between the spec and the docs.
 - status: 429
   error: rate_limit
   title: Rate limit exceeded
-  remediation: Maximum 5 requests per second. Back off and retry after a brief delay.
-  source_operation: openapi/windfall-openapi-original.json#enrichRecord
+  detail: The API enforces a maximum of 5 requests per second.
+  remediation: >-
+    Back off and retry after a brief delay. Windfall's own batch example spaces
+    requests ~0.2s apart and retries once after a 1s sleep on a 429.
+  source_operation: openapi/_original/windfall-openapi-original.json#enrichRecord
+  source: https://api-docs.windfall.com/examples/
+  ref: rate-limits/windfall-rate-limits.yml
+- status: 500
+  error: internal_error
+  title: Unhandled server error
+  detail: Unhandled server error. Described as rare in the sandbox.
+  remediation: >-
+    Retry with backoff. Use the sandbox error simulator
+    (X-Windfall-Sandbox-Error: 500) to exercise this code path deterministically.
+  source_operation: docs:sandbox
+  source: https://api-docs.windfall.com/sandbox/
+  note: Not declared in the OpenAPI responses for enrichRecord.
+- status: 503
+  error: service_unavailable
+  title: Downstream service unavailable
+  detail: A downstream service Windfall depends on is unavailable. Described as rare in the sandbox.
+  remediation: >-
+    Retry with backoff. Use the sandbox error simulator
+    (X-Windfall-Sandbox-Error: 503) to exercise this code path deterministically.
+  source_operation: docs:sandbox
+  source: https://api-docs.windfall.com/sandbox/
+  note: Not declared in the OpenAPI responses for enrichRecord.
+non_error_no_match:
+  note: >-
+    A NO-MATCH IS NOT AN ERROR. When Windfall cannot resolve the submitted
+    record it returns HTTP 200 with household_matched and career_matched both
+    false and the household/career objects null or absent. Clients must branch
+    on the match flags, not on the status code — treating a 200 as "enriched"
+    is the most likely integration defect against this API.
+  source: https://api-docs.windfall.com/quickstart/
+error_simulation:
+  supported: true
+  environment: sandbox only
+  header: X-Windfall-Sandbox-Error
+  values: ['400', '429', '500', '503']
+  ref: sandbox/windfall-sandbox.yml
+  source: https://api-docs.windfall.com/sandbox/
+spec_gap:
+  note: >-
+    The published OpenAPI declares only 200/400/401/429 on enrichRecord. The
+    documentation additionally describes 403, 500 and 503. Three of the six real
+    failure modes are therefore invisible to any client generated from the spec
+    alone. Captured in overlays/windfall-openapi-overlay.yaml.
+  documented_only: [403, 500, 503]
+x-evidence:
+  fetched: '2026-08-14'
+  probes:
+  - {url: 'https://api-docs.windfall.com/authentication/', http_status: 200}
+  - {url: 'https://api-docs.windfall.com/sandbox/', http_status: 200}
+  - {url: 'https://api-docs.windfall.com/examples/', http_status: 200}
+  - {url: 'https://api-docs.windfall.com/static/openapi.json', http_status: 200}

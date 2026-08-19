@@ -1,12 +1,20 @@
 overlay: 1.0.0
 info:
   title: API Evangelist enhancements for Windfall API
-  version: 1.0.0
-extends: openapi/windfall-openapi-original.json
+  version: 1.1.0
+extends: openapi/_original/windfall-openapi-original.json
+x-apievangelist:
+  generated: '2026-08-14'
+  method: generated
+  source: >-
+    Derived from Windfall's own documentation (api-docs.windfall.com,
+    HTTP 200, last updated April 2026) — the enhancements below record facts the
+    docs publish that the published specification omits. The original spec is
+    never mutated.
 actions:
 - target: $.info
   update:
-    x-apievangelist-enriched: '2026-07-21'
+    x-apievangelist-enriched: '2026-08-14'
     x-apievangelist-provider: windfall
     x-apievangelist-category:
     - data-enrichment
@@ -19,6 +27,8 @@ actions:
       Auth is an org-issued apiKey in the X-WF-Auth-Token header. A parallel
       sandbox endpoint (https://api.windfalldata.com/sandbox/v1) accepts
       sandbox_-prefixed tokens and returns deterministic persona responses.
+    x-apievangelist-docs-last-updated: '2026-04'
+    x-apievangelist-general-availability: '2026-05'
 - target: $.servers
   update:
     x-apievangelist-sandbox-server: https://api.windfalldata.com/sandbox/v1
@@ -26,3 +36,58 @@ actions:
   update:
     x-apievangelist-idempotent: false
     x-apievangelist-rate-limit: 5 requests/second
+    x-apievangelist-no-match-is-200: >-
+      A record Windfall cannot resolve returns HTTP 200 with household_matched
+      and career_matched false and the enrichment objects null or absent. Branch
+      on the flags, never on the status code.
+    x-apievangelist-undocumented-responses:
+      note: >-
+        The published spec declares only 200/400/401/429. Windfall's docs
+        additionally describe these statuses, which are invisible to any client
+        generated from the spec alone.
+      statuses:
+      - {status: 403, meaning: Sandbox token used on production, or production token used on sandbox.}
+      - {status: 500, meaning: Unhandled server error.}
+      - {status: 503, meaning: Downstream service unavailable.}
+      source: https://api-docs.windfall.com/sandbox/
+    x-apievangelist-request-limits:
+      max_emails: 10
+      max_phones: 10
+      max_addresses: 10
+      exceeded_status: 400
+      source: https://api-docs.windfall.com/sandbox/
+    x-apievangelist-match-combinations:
+      note: Name alone never matches. One of these combinations must resolve.
+      combinations:
+      - [emails]
+      - ['addresses[].address', 'addresses[].zipcode']
+      - [phones, first_name, last_name]
+- target: $.components.schemas.EnrichmentResponse.properties.household
+  update:
+    x-apievangelist-documented-fields: 32
+    x-apievangelist-field-reference: https://api-docs.windfall.com/household-fields/
+    x-apievangelist-note: >-
+      Typed as a bare object in the spec. Windfall documents 32 household fields
+      across seven groups (identification, wealth, property, life events,
+      philanthropy, political, financial signals, data quality). Availability is
+      plan-dependent — treat every field as optional. Full transcription in
+      data-model/windfall-data-model.yml.
+- target: $.components.schemas.EnrichmentResponse.properties.career
+  update:
+    x-apievangelist-documented-fields: 26
+    x-apievangelist-field-reference: https://api-docs.windfall.com/career-fields/
+    x-apievangelist-requires-entitlement: Career Intelligence (CI)
+    x-apievangelist-note: >-
+      Typed as a bare object in the spec. Windfall documents 26 career fields
+      across five groups (match quality, current role, job changes, employment
+      status, employer firmographics). Requires Career Intelligence on the
+      account; without it these fields never return. Full transcription in
+      data-model/windfall-data-model.yml.
+- target: $.components.securitySchemes.ApiToken
+  update:
+    x-apievangelist-self-service: false
+    x-apievangelist-sandbox-token-prefix: sandbox_
+    x-apievangelist-quota: >-
+      Each token carries a set number of usage tokens (records queryable);
+      allocation and refresh cadence are set by the purchase order, not
+      published.

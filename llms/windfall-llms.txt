@@ -1,33 +1,44 @@
 # Windfall
 
-> Windfall is an AI-powered people intelligence platform that lets data-driven teams personalize go-to-market workflows with wealth and career data. The Windfall API delivers enriched household and career data on a single-record basis in real time: submit a person record with basic PII and receive enriched data about their household (net worth, Windfall ID, confidence) and career (LinkedIn URL, confidence) as JSON in a single request. US coverage only; data refreshed weekly; 5 requests/second.
+> Windfall is a people intelligence platform that lets data-driven teams personalize go-to-market workflows with wealth and career data. The Windfall API delivers enriched household and career data on a single-record basis in real time: submit a person record with basic PII and receive enriched data about their household (net worth, Windfall ID, confidence, property/philanthropy/political/financial signals) and career (LinkedIn URL, job title, employer firmographics) as JSON in a single request. US coverage only; the underlying database is rebuilt weekly; 5 requests/second. Access is contractual — tokens are issued by Windfall, not self-service — and API credits are bundled into existing platform subscriptions (opened to all customers and partners in May 2026).
 
 ## APIs
 
-- [Windfall API — Enrich a Record](https://api-docs.windfall.com/): Real-time single-record household + career enrichment. Base URL `https://api.windfalldata.com/v1`. Auth via `X-WF-Auth-Token` header (org-issued token).
+- [Windfall API — Enrich a Record](https://api-docs.windfall.com/enrich/): Real-time single-record household + career enrichment. `POST https://api.windfalldata.com/v1/`, operationId `enrichRecord`. Auth via the `X-WF-Auth-Token` header (org-issued token). A no-match returns HTTP 200 with `household_matched`/`career_matched` false — branch on the flags, not the status code.
+- [Sandbox](https://api-docs.windfall.com/sandbox/): `POST https://api.windfalldata.com/sandbox/v1` — non-billed, deterministic, 15 fictitious personas, plus a header-driven error simulator (`X-Windfall-Sandbox-Error: 400|429|500|503`).
 
 ## Specs
 
-- [OpenAPI 3.1](https://api-docs.windfall.com/static/openapi.json): The Windfall API OpenAPI description (operation `enrichRecord`).
+- [OpenAPI 3.1](https://api-docs.windfall.com/static/openapi.json): The Windfall API OpenAPI description (one operation, `enrichRecord`; info.version 1.0.0). Note it declares only 200/400/401/429 — the docs additionally describe 403, 500 and 503 — and types `household`/`career` as bare objects rather than enumerating their 32 and 26 documented fields.
 
 ## Docs
 
-- [API Overview](https://api-docs.windfall.com/): Getting started, capabilities, and coverage.
-- [Authentication](https://api-docs.windfall.com/authentication/): `X-WF-Auth-Token` header, token issuance, HTTPS requirement.
-- [Quickstart](https://api-docs.windfall.com/quickstart/): Make your first request in cURL, Python, or Node.js.
-- [Sandbox](https://api-docs.windfall.com/sandbox/): Non-billed environment with deterministic responses from 15 fictitious personas; `sandbox_`-prefixed tokens against `https://api.windfalldata.com/sandbox/v1`.
-- [Household Fields](https://api-docs.windfall.com/): Reference for household response fields.
-- [Career Fields](https://api-docs.windfall.com/): Reference for career response fields.
-- [Examples & FAQs](https://api-docs.windfall.com/examples/): Common integration patterns, partial-match handling, rate-limit-aware batching.
+- [API Overview](https://api-docs.windfall.com/): Getting started, capabilities, coverage.
+- [Authentication & Rate Limits](https://api-docs.windfall.com/authentication/): `X-WF-Auth-Token` header, token issuance, per-purchase-order quota, sandbox token prefix, HTTPS requirement, 5 req/s limit.
+- [Quickstart](https://api-docs.windfall.com/quickstart/): First request in cURL, Python (`requests`) or Node.js (`fetch`). There is no SDK to install.
+- [Enrich a Record](https://api-docs.windfall.com/enrich/): Full request/response reference for the single endpoint.
+- [Household Data Fields](https://api-docs.windfall.com/household-fields/): All 32 household fields — identification, wealth and net worth, property and assets, life events, philanthropy, political, financial signals, data quality.
+- [Career Intelligence Fields](https://api-docs.windfall.com/career-fields/): All 26 career fields — match quality, current role, job changes, employment status, employer details. Requires Career Intelligence (CI) on the account.
+- [Business Use Cases](https://api-docs.windfall.com/business-use-cases/): Lead scoring/routing/CRM enrichment and real-time personalization workflows.
+- [Examples & FAQs](https://api-docs.windfall.com/examples/): Minimal requests, partial-match handling, rate-limit-aware batching, error handling.
 
 ## Company
 
 - [Windfall](https://www.windfall.com/): Company home.
-- [API product page](https://www.windfall.com/api): Real-time wealth and career intelligence via API.
+- [API product page](https://www.windfall.com/api): Wealth and career intelligence via API.
+- [Opening the Windfall API to all customers and partners](https://www.windfall.com/blog/powering-real-time-ai-native-workflows-opening-the-windfall-api-to-all-customers-and-partners): 2026-05-04 announcement — API opened to all existing customers and partners with bundled monthly credits; API requests up over 550% in the preceding ~90 days.
 - [Blog](https://www.windfall.com/blog)
-- [Security](https://www.windfall.com/security): SOC 2 Type 2.
+- [News](https://www.windfall.com/company/news)
+- [Security](https://www.windfall.com/security): Transmission, storage, backup, application security, monitoring and data-handling controls.
+- [Privacy & Security](https://www.windfall.com/platform/privacy-security): SOC 2 Type 2; registered California data broker; CCPA compliant.
+- [Login](https://login.windfalldata.com/login)
+- [Contact](https://www.windfall.com/contact)
 - [Terms of Service](https://www.windfall.com/terms-of-service)
 - [Privacy Policy](https://www.windfall.com/privacy)
+
+## Not published
+
+These were probed and do not exist, so an agent should not look for them: no pricing or plans page, no public status page, no changelog or release notes, no MCP server, no A2A agent card, no `/llms.txt`, no `/.well-known/` documents on any host, no OAuth, no webhooks or event stream, no first-party SDK in any package registry, no CLI, and no vulnerability disclosure program or `security.txt`.
 
 ## Enrichment artifacts (API Evangelist)
 
@@ -35,8 +46,14 @@
 - [Conventions](conventions/windfall-conventions.yml)
 - [Error catalog](errors/windfall-problem-types.yml)
 - [Lifecycle](lifecycle/windfall-lifecycle.yml)
+- [Rate limits](rate-limits/windfall-rate-limits.yml)
 - [Sandbox](sandbox/windfall-sandbox.yml)
 - [Data model](data-model/windfall-data-model.yml)
 - [Conformance](conformance/windfall-conformance.yml)
+- [Plans & pricing](plans/windfall-plans-pricing.yml)
+- [Packages & SDKs](packages/windfall-packages.yml)
 - [Trust center](security/windfall-trust-center.yml)
+- [Domain security](security/windfall-domain-security.yml)
+- [MCP candidate](mcp/windfall-mcp.yml)
 - [Agent skill: enrich a person record](skills/windfall-enrich-person-record.md)
+- [Agent skill: test against the sandbox](skills/windfall-sandbox-integration-test.md)

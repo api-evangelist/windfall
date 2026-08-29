@@ -16,6 +16,18 @@ description: >-
   mirrors production for integration testing. Access is contractual — tokens are
   issued by Windfall and API credits were bundled into existing subscriptions
   when the API opened to all customers and partners in May 2026.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: contact-sales
   onboarding: sales

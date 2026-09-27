@@ -79,6 +79,15 @@ paths:
       - Windfall API
 components:
   schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error type identifier.
+        message:
+          type: string
+          description: Human-readable error message.
     Address:
       type: object
       description: A property address used during matching.
@@ -99,15 +108,6 @@ components:
           type: string
           nullable: true
           description: US or Canadian zip code. Must include at least 5 digits and may optionally include the +4 digits. For best results, always provide a zip code.
-    Error:
-      type: object
-      properties:
-        error:
-          type: string
-          description: Error type identifier.
-        message:
-          type: string
-          description: Human-readable error message.
     EnrichmentRequest:
       type: object
       description: A person record to enrich. Provide as many fields as possible for the best match results.

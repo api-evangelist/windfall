@@ -99,15 +99,31 @@ components:
           type: string
           nullable: true
           description: US or Canadian zip code. Must include at least 5 digits and may optionally include the +4 digits. For best results, always provide a zip code.
-    Error:
+    EnrichmentResponse:
       type: object
+      description: Enrichment results for the submitted person record.
       properties:
-        error:
+        id:
           type: string
-          description: Error type identifier.
-        message:
-          type: string
-          description: Human-readable error message.
+          nullable: true
+          description: The ID you submitted, echoed back.
+        household:
+          type: object
+          nullable: true
+          description: Enriched household data including Windfall ID, net worth, and confidence score. Only present when a household match is found. Fields vary by account configuration.
+        career:
+          type: object
+          nullable: true
+          description: Career data including LinkedIn URL and confidence score. Only present when a career match is found. Fields vary by account configuration.
+        household_matched:
+          type: boolean
+          description: Whether household attributes were returned.
+        career_matched:
+          type: boolean
+          description: Whether career attributes were returned.
+      required:
+      - household_matched
+      - career_matched
     EnrichmentRequest:
       type: object
       description: A person record to enrich. Provide as many fields as possible for the best match results.
@@ -146,31 +162,15 @@ components:
           type: string
           nullable: true
           description: A company name associated with the individual. Used to improve career matching accuracy when multiple people share the same name.
-    EnrichmentResponse:
+    Error:
       type: object
-      description: Enrichment results for the submitted person record.
       properties:
-        id:
+        error:
           type: string
-          nullable: true
-          description: The ID you submitted, echoed back.
-        household:
-          type: object
-          nullable: true
-          description: Enriched household data including Windfall ID, net worth, and confidence score. Only present when a household match is found. Fields vary by account configuration.
-        career:
-          type: object
-          nullable: true
-          description: Career data including LinkedIn URL and confidence score. Only present when a career match is found. Fields vary by account configuration.
-        household_matched:
-          type: boolean
-          description: Whether household attributes were returned.
-        career_matched:
-          type: boolean
-          description: Whether career attributes were returned.
-      required:
-      - household_matched
-      - career_matched
+          description: Error type identifier.
+        message:
+          type: string
+          description: Human-readable error message.
   securitySchemes:
     ApiToken:
       type: apiKey

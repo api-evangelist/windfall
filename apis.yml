@@ -66,6 +66,9 @@ tags:
 - Identity Resolution
 - Sales Intelligence
 - Marketing
+- Data
+- Net Worth
+- Sales
 apis:
 - aid: windfall:windfall-windfall-api-api
   name: Windfall API

@@ -180,6 +180,8 @@ common:
   url: https://www.linkedin.com/company/windfall-data/
 - type: Twitter
   url: https://twitter.com/windfalldata
+- type: Website
+  url: https://windfall.com
 x-pointers-deliberately-absent:
   note: Recorded so a later round does not re-open these. Each was probed on 2026-08-14 and is genuinely
     not published by Windfall; wiring the pointer would assert a surface the provider does not serve.

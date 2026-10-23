@@ -177,3 +177,9 @@ components:
       name: X-WF-Auth-Token
       in: header
       description: Your API token, provided by Windfall. All requests must include this header.
+x-provenance:
+  method: harvested
+  publisher: Windfall
+  source: https://api-docs.windfall.com/static/openapi.json
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
